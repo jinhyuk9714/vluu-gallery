@@ -27,6 +27,7 @@
 ## Launch Checklist
 
 - Verify preview and production environment variables, including the correct Vercel domain in `NEXT_PUBLIC_SITE_URL`.
-- Confirm 404, sitemap, robots, canonical, and OG metadata
-- Confirm homepage hero is the only prioritized LCP image
-- Confirm content updates refresh without full redeploy
+- Confirm 404, sitemap, robots, canonical, and OG metadata.
+- Confirm homepage hero is the only prioritized LCP image.
+- Confirm content updates refresh without full redeploy.
+- Use [release-checklist.md](./release-checklist.md) for the full preview, production, publish validation, and rollback procedure.
