@@ -15,14 +15,19 @@ test("homepage, collections, and contact render core editorial content", async (
   ).toBeVisible();
 });
 
-test("about, photo detail, and missing routes render expected states", async ({ page }) => {
+test("about, collection detail, photo detail, and missing routes render expected states", async ({ page }) => {
   await page.goto("/about");
   await expect(page.getByRole("heading", { name: /^about$/i })).toBeVisible();
   await expect(page.getByText(/small movements, quiet infrastructure/i)).toBeVisible();
 
+  await page.goto("/collections/seoul-evenings");
+  await expect(page.getByRole("heading", { name: /seoul evenings/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /han river blue hour/i })).toBeVisible();
+
   await page.goto("/photo/bridge-reflections");
   await expect(page.getByRole("heading", { name: /bridge reflections/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /seoul evenings/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /last train platform/i })).toBeVisible();
 
   const notFoundResponse = await page.goto("/missing-frame");
   expect(notFoundResponse?.status()).toBe(404);
