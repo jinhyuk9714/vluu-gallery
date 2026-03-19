@@ -18,4 +18,4 @@ A curated personal photography gallery built with Next.js, Sanity Studio, and Ve
 
 ## Environment
 
-Copy [`.env.example`](/Users/sungjh/Projects/gallery/.worktrees/foundation/.env.example) to `.env.local` for the web app or configure the same values in Vercel and Sanity-hosted Studio.
+Copy [`.env.example`](./.env.example) to `.env.local` for the web app. In Vercel, configure the same values separately for Preview and Production, and follow the launch notes in [`docs/deployment.md`](./docs/deployment.md).

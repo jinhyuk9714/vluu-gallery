@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Libre_Bodoni, Public_Sans } from "next/font/google";
 import "./globals.css";
 
+import { getSiteOrigin } from "@/lib/sanity/data";
+
 const bodoni = Libre_Bodoni({
   subsets: ["latin"],
   variable: "--font-libre-bodoni",
@@ -14,7 +16,7 @@ const publicSans = Public_Sans({
 
 export const metadata: Metadata = {
   description: "A curated personal photography gallery with collection-led storytelling.",
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL(getSiteOrigin()),
   title: "Sung Gallery",
 };
 
