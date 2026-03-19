@@ -2,37 +2,51 @@ import { getSiteSettings } from "@/lib/sanity/data";
 
 export async function SiteFooter() {
   const settings = await getSiteSettings();
+  const primarySocial =
+    settings.socialLinks.find((link) => link.label.toLowerCase().includes("instagram")) ??
+    settings.socialLinks[0];
+  const currentYear = new Date().getFullYear();
+  const socialLabel = (() => {
+    if (!primarySocial) {
+      return settings.contactEmail;
+    }
+
+    const url = primarySocial.url;
+    const match = url.match(/instagram\.com\/([^/?#]+)/i);
+    if (match?.[1]) {
+      return `${primarySocial.label.toUpperCase()}: @${match[1]}`;
+    }
+
+    return primarySocial.label.toUpperCase();
+  })();
 
   return (
-    <footer className="mt-24 border-t border-[var(--color-line)]">
-      <div className="mx-auto grid w-full max-w-[1600px] gap-8 px-5 py-8 text-sm text-[var(--color-muted)] sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:px-12">
-        <div className="space-y-3">
-          <p className="font-serif text-[1.25rem] tracking-[0.14em] text-[var(--color-ink)]">
-            {settings.siteTitle}
-          </p>
-          <p className="max-w-xl text-[0.92rem] leading-7">{settings.siteDescription}</p>
-        </div>
-        <div className="space-y-4 lg:text-right">
+    <footer className="mt-16">
+      <div className="mx-auto grid w-full max-w-[1720px] gap-3 px-4 py-4 text-[0.95rem] text-[var(--color-ink)] sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:items-end lg:px-10">
+        <p>{settings.siteTitle} © {currentYear}</p>
+        <a
+          className="justify-self-start transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:justify-self-center"
+          href="#top"
+        >
+          Back to top
+        </a>
+        {primarySocial ? (
           <a
-            className="inline-block text-[0.84rem] uppercase tracking-[0.24em] transition-colors hover:text-[var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
+            className="transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:justify-self-end"
+            href={primarySocial.url}
+            rel="noreferrer"
+            target="_blank"
+          >
+            {socialLabel}
+          </a>
+        ) : (
+          <a
+            className="transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:justify-self-end"
             href={`mailto:${settings.contactEmail}`}
           >
             {settings.contactEmail}
           </a>
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-[0.72rem] uppercase tracking-[0.24em] lg:justify-end">
-            {settings.socialLinks.map((link) => (
-              <a
-                key={link.label}
-                className="transition-colors hover:text-[var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
-                href={link.url}
-                rel="noreferrer"
-                target="_blank"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </footer>
   );

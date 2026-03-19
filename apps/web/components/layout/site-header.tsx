@@ -1,33 +1,62 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "Overview" },
-  { href: "/collections", label: "Sequences" },
-  { href: "/about", label: "Info" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", label: "Home" },
+  { href: "/collections", label: "Collections" },
+  { href: "/about", label: "About" },
 ];
 
 export function SiteHeader() {
+  const pathname = usePathname();
+  const overlayTone =
+    pathname === "/" ||
+    pathname.startsWith("/photo/") ||
+    (pathname.startsWith("/collections/") && pathname !== "/collections");
+  const textClass = overlayTone ? "text-white" : "text-[var(--color-ink)]";
+
   return (
-    <header className="border-b border-[var(--color-line)] bg-[rgba(244,239,231,0.76)] backdrop-blur-sm">
-      <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-6 px-5 py-4 sm:px-8 lg:px-12">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
+      <div className="mx-auto grid w-full max-w-[1720px] grid-cols-[auto_1fr_auto] items-start gap-5 px-4 py-4 sm:px-6 lg:px-10">
         <Link
-          className="font-serif text-[1.15rem] tracking-[0.16em] text-[var(--color-ink)] transition-opacity duration-300 hover:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
+          className={`pointer-events-auto text-[clamp(0.95rem,1vw,1.1rem)] leading-none transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-transparent ${textClass}`}
           href="/"
         >
           VLUU
         </Link>
-        <nav aria-label="Primary" className="flex flex-wrap items-center justify-end gap-x-5 gap-y-2 sm:gap-x-7">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              className="text-[0.68rem] uppercase tracking-[0.3em] text-[var(--color-muted)] transition-colors duration-300 hover:text-[var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
-              href={item.href}
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav
+          aria-label="Primary"
+          className="pointer-events-auto justify-self-center"
+        >
+          <div className={`flex flex-col items-start text-[clamp(0.98rem,1vw,1.15rem)] leading-[1.15] ${textClass}`}>
+            {navItems.map((item) => {
+              const isActive = item.href === "/"
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  className="transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
+                  href={item.href}
+                >
+                  <span className={isActive ? "mr-1 inline-block" : "mr-1 inline-block opacity-0"}>
+                    •
+                  </span>
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
         </nav>
+        <Link
+          className={`pointer-events-auto justify-self-end text-[clamp(0.98rem,1vw,1.15rem)] leading-none transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-transparent ${textClass}`}
+          href="/contact"
+        >
+          Contact
+        </Link>
       </div>
     </header>
   );

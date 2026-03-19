@@ -30,30 +30,26 @@ function skipWhenNoRealContent() {
 
 test("homepage, collections, about, and contact render core editorial content", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("main").getByText(/featured sequence/i)).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: /a selected archive, cut as a sequence/i }),
-  ).toBeVisible();
-  await expect(page.getByRole("link", { name: /enter sequence/i })).toBeVisible();
-  await expect(page.getByRole("main").getByRole("link", { name: /^overview$/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /home/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /collections/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /contact/i })).toBeVisible();
+  await expect(page.getByRole("main").getByText(/view collection/i).first()).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^scroll$/i)).toBeVisible();
   await expectCanonical(page, "/");
 
   await page.goto("/collections");
-  await expect(page.getByRole("heading", { name: /^all sequences\.$/i })).toBeVisible();
-  await expect(
-    page.getByText(/the list reads as a line of image-led panels rather than a grid of cards/i),
-  ).toBeVisible();
+  await expect(page.getByRole("main").getByText(/view collection/i).first()).toBeVisible();
   await expectCanonical(page, "/collections");
 
   await page.goto("/about");
   await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByText(/this personal archive stays small on purpose/i)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^info$/i)).toBeVisible();
   await expectCanonical(page, "/about");
 
   await page.goto("/contact");
   await expect(page.getByRole("main").getByText(/^contact$/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: /reach out with context/i })).toBeVisible();
-  await expect(page.getByText(/commissions, editorial use, or print requests/i)).toBeVisible();
+  await expect(page.getByText(/timeline, location, and intended use/i)).toBeVisible();
   await expectCanonical(page, "/contact");
 });
 
