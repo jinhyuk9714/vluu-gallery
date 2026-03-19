@@ -1,30 +1,22 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { ProportionalImage } from "@/components/site/proportional-image";
 import type { CollectionPageData, PhotoOrientation, SiteSettings } from "@/types/content";
 
 type ReelItem = {
   alt: string;
+  aspectRatio?: number;
+  height?: number;
   href: string;
   imageUrl: string;
-  orientation: PhotoOrientation;
+  orientation?: PhotoOrientation;
+  width?: number;
 };
 
 type Density = "s" | "m" | "l";
-
-function getAspectClass(orientation: PhotoOrientation) {
-  switch (orientation) {
-    case "portrait":
-      return "aspect-[4/5]";
-    case "square":
-      return "aspect-square";
-    default:
-      return "aspect-[4/3]";
-  }
-}
 
 function getColumnsClass(density: Density) {
   switch (density) {
@@ -70,26 +62,28 @@ export function HomeScene({
 
   return (
     <div className="pb-12">
-      <section className="relative min-h-[100svh] overflow-hidden">
-        <div className="grid min-h-[100svh] grid-cols-1 lg:grid-cols-[0.37fr_0.63fr]">
-          <div className="relative hidden min-h-[100svh] overflow-hidden lg:block">
-            <Image
+      <section className="relative overflow-hidden bg-[var(--color-surface)]">
+        <div className="grid grid-cols-1 lg:min-h-[100svh] lg:grid-cols-[0.37fr_0.63fr]">
+          <div className="relative hidden border-r border-[var(--color-line)] bg-[var(--color-surface)] lg:flex lg:min-h-[100svh] lg:items-end">
+            <ProportionalImage
               alt={previewCollection?.coverAlt ?? activeCollection.coverAlt}
-              className="scene-image object-cover"
-              fill
+              className="scene-image max-h-[100svh] w-full object-contain object-left-bottom"
+              height={previewCollection?.height ?? activeCollection.height}
               priority
               sizes="38vw"
               src={previewCollection?.coverImageUrl ?? activeCollection.coverImageUrl}
+              width={previewCollection?.width ?? activeCollection.width}
             />
           </div>
-          <div className="relative min-h-[100svh] overflow-hidden">
-            <Image
+          <div className="relative flex items-end bg-[var(--color-surface)] lg:min-h-[100svh]">
+            <ProportionalImage
               alt={activeCollection.coverAlt}
-              className="scene-image object-cover"
-              fill
+              className="scene-image max-h-[84svh] w-full object-contain object-center lg:max-h-[100svh]"
+              height={activeCollection.height}
               priority
               sizes="100vw"
               src={activeCollection.coverImageUrl}
+              width={activeCollection.width}
             />
           </div>
         </div>
@@ -169,13 +163,14 @@ export function HomeScene({
               className="mb-4 block break-inside-avoid overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
               href={item.href}
             >
-              <div className={`relative overflow-hidden bg-[var(--color-surface)] ${getAspectClass(item.orientation)}`}>
-                <Image
+              <div className="overflow-hidden bg-[var(--color-surface)]">
+                <ProportionalImage
                   alt={item.alt}
-                  className="scene-image h-full w-full object-cover transition duration-700 hover:scale-[1.02] motion-reduce:transition-none"
-                  fill
+                  className="scene-image h-auto w-full transition duration-700 hover:scale-[1.02] motion-reduce:transition-none"
+                  height={item.height}
                   sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 24vw"
                   src={item.imageUrl}
+                  width={item.width}
                 />
               </div>
             </Link>

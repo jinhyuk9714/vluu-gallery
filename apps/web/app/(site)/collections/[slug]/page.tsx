@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PhotoGrid } from "@/components/site/photo-grid";
+import { ProportionalImage } from "@/components/site/proportional-image";
 import { getCollectionBySlug, getCollectionSlugs, getCollections } from "@/lib/sanity/data";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -59,14 +59,15 @@ export default async function CollectionPage({
 
   return (
     <div className="pb-10">
-      <section className="relative min-h-[92svh] overflow-hidden">
-        <Image
+      <section className="relative overflow-hidden bg-[var(--color-surface)]">
+        <ProportionalImage
           alt={collection.coverAlt}
-          className="scene-image object-cover"
-          fill
+          className="scene-image max-h-[92svh] w-full object-contain"
+          height={collection.height}
           priority
           sizes="100vw"
           src={collection.coverImageUrl}
+          width={collection.width}
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.14)_0%,rgba(0,0,0,0)_24%,rgba(0,0,0,0.34)_100%)]" />
         <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-[1720px] px-4 pb-5 sm:px-6 lg:px-10 lg:pb-8">
@@ -82,13 +83,14 @@ export default async function CollectionPage({
             className="block overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
             href={`/photo/${firstPhoto.slug}`}
           >
-            <div className={`relative overflow-hidden bg-[var(--color-surface)] ${firstPhoto.orientation === "portrait" ? "aspect-[4/5]" : "aspect-[4/3]"}`}>
-              <Image
+            <div className="overflow-hidden bg-[var(--color-surface)]">
+              <ProportionalImage
                 alt={firstPhoto.alt}
-                className="object-cover"
-                fill
+                className="h-auto w-full"
+                height={firstPhoto.height}
                 sizes="(max-width: 1024px) 100vw, 48vw"
                 src={firstPhoto.imageUrl}
+                width={firstPhoto.width}
               />
             </div>
           </Link>
@@ -98,13 +100,14 @@ export default async function CollectionPage({
             className="block overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
             href={`/photo/${secondPhoto.slug}`}
           >
-            <div className={`relative overflow-hidden bg-[var(--color-surface)] ${secondPhoto.orientation === "portrait" ? "aspect-[4/5]" : "aspect-[4/3]"}`}>
-              <Image
+            <div className="overflow-hidden bg-[var(--color-surface)]">
+              <ProportionalImage
                 alt={secondPhoto.alt}
-                className="object-cover"
-                fill
+                className="h-auto w-full"
+                height={secondPhoto.height}
                 sizes="(max-width: 1024px) 100vw, 48vw"
                 src={secondPhoto.imageUrl}
+                width={secondPhoto.width}
               />
             </div>
           </Link>
@@ -117,13 +120,14 @@ export default async function CollectionPage({
             className="block overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
             href={`/photo/${thirdPhoto.slug}`}
           >
-            <div className="relative aspect-[16/10] overflow-hidden bg-[var(--color-surface)]">
-              <Image
+            <div className="overflow-hidden bg-[var(--color-surface)]">
+              <ProportionalImage
                 alt={thirdPhoto.alt}
-                className="object-cover"
-                fill
+                className="h-auto w-full"
+                height={thirdPhoto.height}
                 sizes="100vw"
                 src={thirdPhoto.imageUrl}
+                width={thirdPhoto.width}
               />
             </div>
           </Link>

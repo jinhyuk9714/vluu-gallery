@@ -10,86 +10,112 @@ import type {
 
 const COLLECTIONS: CollectionPageData[] = [
   {
+    aspectRatio: 0.8,
     coverAlt: "Muted dusk skyline over the Han River",
     coverImageUrl: "/placeholders/seoul-evenings-cover.svg",
+    height: 2000,
     intro:
       "A study in sodium light, reflected glass, and the quiet between trains and river crossings.",
+    orientation: "portrait",
     photoCount: 3,
     photos: [
       {
         alt: "Apartment towers catching the last cool blue light",
+        aspectRatio: 1.5,
         captionShort: "Blue hour flattening the city into calm geometry.",
+        height: 1200,
         imageUrl: "/placeholders/seoul-evenings-01.svg",
         locationLabel: "Mapo",
         orientation: "landscape",
         shotDate: "2025-10-12",
         slug: "han-river-blue-hour",
         title: "Han River Blue Hour",
+        width: 1800,
       },
       {
         alt: "Subway platform lit by warm fluorescent fixtures",
+        aspectRatio: 0.8,
         captionShort: "A pocket of stillness before the last fast train.",
+        height: 1500,
         imageUrl: "/placeholders/seoul-evenings-02.svg",
         locationLabel: "Gongdeok",
         orientation: "portrait",
         shotDate: "2025-10-14",
         slug: "last-train-platform",
         title: "Last Train Platform",
+        width: 1200,
       },
       {
         alt: "Pedestrian bridge with olive-toned city reflections",
+        aspectRatio: 1.5,
         captionShort: "Steel, river haze, and a small current of people.",
+        height: 1200,
         imageUrl: "/placeholders/seoul-evenings-03.svg",
         locationLabel: "Yeouido",
         orientation: "landscape",
         shotDate: "2025-10-17",
         slug: "bridge-reflections",
         title: "Bridge Reflections",
+        width: 1800,
       },
     ],
     slug: "seoul-evenings",
     title: "Seoul Evenings",
+    width: 1600,
   },
   {
+    aspectRatio: 0.8,
     coverAlt: "A winter tram interior rendered in pale morning light",
     coverImageUrl: "/placeholders/winter-transit-cover.svg",
+    height: 2000,
     intro:
       "Cold windows, compressed air, and small gestures that make movement feel intimate.",
+    orientation: "portrait",
     photoCount: 3,
     photos: [
       {
         alt: "Frosted tram window with soft light bleeding through",
+        aspectRatio: 0.8,
         captionShort: "The city arriving slowly through condensation.",
+        height: 1500,
         imageUrl: "/placeholders/winter-transit-01.svg",
         locationLabel: "Line 2",
         orientation: "portrait",
         shotDate: "2025-12-02",
         slug: "condensation-window",
         title: "Condensation Window",
+        width: 1200,
       },
       {
         alt: "Transit card reader and gloved hand in steel light",
+        aspectRatio: 1,
         captionShort: "A mechanical gesture repeated a thousand times a day.",
+        height: 1400,
         imageUrl: "/placeholders/winter-transit-02.svg",
         locationLabel: "City Hall",
         orientation: "square",
         shotDate: "2025-12-05",
         slug: "fare-beep",
         title: "Fare Beep",
+        width: 1400,
       },
       {
         alt: "Empty carriage aisle with muted olive seats",
+        aspectRatio: 1.5,
         captionShort: "The quiet luxury of arriving before everyone else.",
+        height: 1200,
         imageUrl: "/placeholders/winter-transit-03.svg",
         locationLabel: "Early Service",
         orientation: "landscape",
         shotDate: "2025-12-08",
         slug: "first-carriage",
         title: "First Carriage",
+        width: 1800,
       },
     ],
     slug: "winter-transit",
     title: "Winter Transit",
+    width: 1600,
   },
 ];
 
@@ -99,13 +125,17 @@ const SOCIAL_LINKS = [
 ];
 
 export function getMockCollections(): CollectionCard[] {
-  return COLLECTIONS.map(({ coverAlt, coverImageUrl, intro, photoCount, slug, title }) => ({
+  return COLLECTIONS.map(({ aspectRatio, coverAlt, coverImageUrl, height, intro, orientation, photoCount, slug, title, width }) => ({
+    aspectRatio,
     coverAlt,
     coverImageUrl,
+    height,
     intro,
+    orientation,
     photoCount,
     slug,
     title,
+    width,
   }));
 }
 

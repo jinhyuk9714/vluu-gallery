@@ -3,6 +3,53 @@ import { describe, expect, it } from "vitest";
 import { normalizeAboutPage, normalizeCollection } from "@/lib/sanity/data";
 
 describe("sanity data normalization", () => {
+  it("derives photo dimensions and orientation from image metadata", () => {
+    const collection = normalizeCollection({
+      intro: "Window studies from a moving train.",
+      photos: [
+        {
+          alt: "Tower framed by a train window.",
+          image: {
+            asset: { _ref: "image-sample-900x1600-jpg" },
+            dimensions: { aspectRatio: 0.5625, height: 1600, width: 900 },
+          },
+          slug: "tower-window",
+          title: "Tower Window",
+        },
+      ],
+      slug: "window-lines",
+      title: "Window Lines",
+    });
+
+    expect(collection.photos[0]?.orientation).toBe("portrait");
+    expect(collection.photos[0]?.aspectRatio).toBeCloseTo(0.5625);
+    expect(collection.photos[0]?.height).toBe(1600);
+    expect(collection.photos[0]?.width).toBe(900);
+  });
+
+  it("does not synthesize image orientation when dimensions are missing", () => {
+    const collection = normalizeCollection({
+      intro: "Window studies from a moving train.",
+      photos: [
+        {
+          alt: "Tower framed by a train window.",
+          image: {
+            asset: { _ref: "image-sample-900x1600-jpg" },
+          },
+          slug: "tower-window",
+          title: "Tower Window",
+        },
+      ],
+      slug: "window-lines",
+      title: "Window Lines",
+    });
+
+    expect(collection.photos[0]?.orientation).toBeUndefined();
+    expect(collection.photos[0]?.aspectRatio).toBeUndefined();
+    expect(collection.photos[0]?.height).toBeUndefined();
+    expect(collection.photos[0]?.width).toBeUndefined();
+  });
+
   it("preserves authored collection cover alt text", () => {
     const collection = normalizeCollection({
       coverAlt: "Fog lifting over the first platform.",

@@ -28,15 +28,21 @@ export default async function HomePage() {
   const reelItems = collectionsForScene.flatMap((collection) => [
     {
       alt: collection.coverAlt,
+      aspectRatio: collection.aspectRatio,
+      height: collection.height,
       href: `/collections/${collection.slug}`,
       imageUrl: collection.coverImageUrl,
-      orientation: "landscape" as const,
+      orientation: collection.orientation,
+      width: collection.width,
     },
     ...collection.photos.map((photo) => ({
       alt: photo.alt,
+      aspectRatio: photo.aspectRatio,
+      height: photo.height,
       href: `/photo/${photo.slug}`,
       imageUrl: photo.imageUrl,
       orientation: photo.orientation,
+      width: photo.width,
     })),
   ]);
 

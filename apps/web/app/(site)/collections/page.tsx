@@ -14,8 +14,8 @@ export default async function CollectionsPage() {
   return (
     <div className="mx-auto w-full max-w-[1720px] px-4 pb-14 pt-24 sm:px-6 lg:px-10 lg:pt-28">
       <section className="grid gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-        {collections.map((collection, index) => (
-          <CollectionCard key={collection.slug} index={index} {...collection} />
+        {collections.map((collection) => (
+          <CollectionCard key={collection.slug} {...collection} />
         ))}
       </section>
     </div>

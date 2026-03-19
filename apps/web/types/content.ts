@@ -1,11 +1,18 @@
 export type PhotoOrientation = "landscape" | "portrait" | "square";
 
+export interface ImageDimensions {
+  aspectRatio?: number;
+  height?: number;
+  orientation?: PhotoOrientation;
+  width?: number;
+}
+
 export interface SocialLink {
   label: string;
   url: string;
 }
 
-export interface CollectionCard {
+export interface CollectionCard extends ImageDimensions {
   coverAlt: string;
   coverImageUrl: string;
   intro: string;
@@ -14,12 +21,11 @@ export interface CollectionCard {
   title: string;
 }
 
-export interface PhotoSummary {
+export interface PhotoSummary extends ImageDimensions {
   alt: string;
   captionShort: string;
   imageUrl: string;
   locationLabel?: string;
-  orientation: PhotoOrientation;
   shotDate?: string;
   slug: string;
   title: string;
@@ -62,4 +68,3 @@ export interface HomePageData {
   latestCollection: CollectionCard;
   site: SiteSettings;
 }
-

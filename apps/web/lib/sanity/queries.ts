@@ -15,7 +15,12 @@ export const siteSettingsQuery = groq`
       "slug": slug.current,
       intro,
       coverAlt,
-      coverImage
+      coverImage{
+        asset,
+        crop,
+        hotspot,
+        "dimensions": asset->metadata.dimensions
+      }
     }
   }
 `;
@@ -26,7 +31,12 @@ export const collectionsQuery = groq`
     "slug": slug.current,
     intro,
     coverAlt,
-    coverImage,
+    coverImage{
+      asset,
+      crop,
+      hotspot,
+      "dimensions": asset->metadata.dimensions
+    },
     "photos": photos[]->{
       title,
       "slug": slug.current,
@@ -34,7 +44,12 @@ export const collectionsQuery = groq`
       captionShort,
       shotDate,
       locationLabel,
-      image
+      image{
+        asset,
+        crop,
+        hotspot,
+        "dimensions": asset->metadata.dimensions
+      }
     }
   }
 `;
@@ -45,6 +60,11 @@ export const aboutPageQuery = groq`
     intro,
     body,
     portraitAlt,
-    portraitImage
+    portraitImage{
+      asset,
+      crop,
+      hotspot,
+      "dimensions": asset->metadata.dimensions
+    }
   }
 `;

@@ -1,18 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import { ProportionalImage } from "@/components/site/proportional-image";
 import type { PhotoSummary } from "@/types/content";
-
-function getAspectClass(orientation: PhotoSummary["orientation"]) {
-  switch (orientation) {
-    case "portrait":
-      return "aspect-[4/5]";
-    case "square":
-      return "aspect-square";
-    default:
-      return "aspect-[16/10]";
-  }
-}
 
 export function PhotoGrid({ photos }: { photos: PhotoSummary[] }) {
   return (
@@ -23,13 +12,14 @@ export function PhotoGrid({ photos }: { photos: PhotoSummary[] }) {
           className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
           href={`/photo/${photo.slug}`}
         >
-          <div className={`relative overflow-hidden bg-[var(--color-surface)] ${getAspectClass(photo.orientation)}`}>
-            <Image
+          <div className="overflow-hidden bg-[var(--color-surface)]">
+            <ProportionalImage
               alt={photo.alt}
-              className="object-cover transition duration-700 group-hover:scale-[1.02] motion-reduce:transition-none"
-              fill
+              className="h-auto w-full transition duration-700 group-hover:scale-[1.02] motion-reduce:transition-none"
+              height={photo.height}
               sizes="(max-width: 768px) 100vw, 82vw"
               src={photo.imageUrl}
+              width={photo.width}
             />
           </div>
         </Link>

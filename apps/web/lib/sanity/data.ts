@@ -32,6 +32,11 @@ import type {
 type RawSanityImage = {
   asset?: { _ref?: string };
   crop?: unknown;
+  dimensions?: {
+    aspectRatio?: number;
+    height?: number;
+    width?: number;
+  };
   hotspot?: unknown;
 };
 
@@ -77,24 +82,63 @@ type RawAboutPage = {
   title?: string;
 };
 
+function getOrientationFromDimensions(dimensions?: RawSanityImage["dimensions"]): PhotoOrientation | undefined {
+  const width = dimensions?.width;
+  const height = dimensions?.height;
+
+  if (!width || !height) {
+    return undefined;
+  }
+
+  const ratio = width / height;
+  if (ratio >= 0.95 && ratio <= 1.05) {
+    return "square";
+  }
+
+  return ratio > 1 ? "landscape" : "portrait";
+}
+
+function getImageDimensions(image?: RawSanityImage) {
+  const width = image?.dimensions?.width;
+  const height = image?.dimensions?.height;
+
+  if (!width || !height) {
+    return {
+      aspectRatio: undefined,
+      height: undefined,
+      orientation: undefined,
+      width: undefined,
+    };
+  }
+
+  return {
+    aspectRatio: image?.dimensions?.aspectRatio ?? width / height,
+    height,
+    orientation: getOrientationFromDimensions(image?.dimensions),
+    width,
+  };
+}
+
 export function normalizeCollection(raw: RawCollection): CollectionPageData {
   const normalizedPhotos = raw.photos?.map((photo, index) => {
-    const orientation: PhotoOrientation =
-      index % 3 === 0 ? "landscape" : index % 3 === 1 ? "portrait" : "square";
+    const dimensions = getImageDimensions(photo.image);
 
     return {
+      ...dimensions,
       alt: photo.alt ?? photo.title ?? "Gallery image",
       captionShort: photo.captionShort ?? "",
       imageUrl: photo.image ? urlForImage(photo.image, 1800) : "/placeholders/seoul-evenings-01.svg",
       locationLabel: photo.locationLabel,
-      orientation,
       shotDate: photo.shotDate,
       slug: photo.slug ?? `photo-${index}`,
       title: photo.title ?? "Untitled",
     };
   }) ?? [];
 
+  const coverDimensions = getImageDimensions(raw.coverImage);
+
   return {
+    ...coverDimensions,
     coverAlt: raw.coverAlt ?? (raw.title ? `${raw.title} cover image` : "Collection cover image"),
     coverImageUrl: raw.coverImage
       ? urlForImage(raw.coverImage, 1800)
@@ -111,18 +155,23 @@ export function normalizeSiteSettings(raw: RawSiteSettings): SiteSettings {
   return {
     contactEmail: raw.contactEmail ?? "hello@example.com",
     featuredCollections:
-      raw.featuredCollections?.map((collection, index) => ({
-        coverAlt: collection.coverAlt ?? `${collection.title ?? "Collection"} cover image`,
-        coverImageUrl: collection.coverImage
-          ? urlForImage(collection.coverImage, 1600)
-          : index % 2 === 0
-            ? "/placeholders/seoul-evenings-cover.svg"
-            : "/placeholders/winter-transit-cover.svg",
-        intro: collection.intro ?? "",
-        photoCount: 0,
-        slug: collection.slug ?? `collection-${index}`,
-        title: collection.title ?? "Untitled Collection",
-      })) ?? [],
+      raw.featuredCollections?.map((collection, index) => {
+        const coverDimensions = getImageDimensions(collection.coverImage);
+
+        return {
+          ...coverDimensions,
+          coverAlt: collection.coverAlt ?? `${collection.title ?? "Collection"} cover image`,
+          coverImageUrl: collection.coverImage
+            ? urlForImage(collection.coverImage, 1600)
+            : index % 2 === 0
+              ? "/placeholders/seoul-evenings-cover.svg"
+              : "/placeholders/winter-transit-cover.svg",
+          intro: collection.intro ?? "",
+          photoCount: 0,
+          slug: collection.slug ?? `collection-${index}`,
+          title: collection.title ?? "Untitled Collection",
+        };
+      }) ?? [],
     homeIntro: raw.homeIntro ?? "",
     siteDescription: raw.siteDescription ?? "",
     siteTitle: raw.siteTitle ?? "VLUU",
@@ -181,12 +230,16 @@ export async function getCollections(): Promise<CollectionCard[]> {
   return withFallback(
     async () =>
       (await fetchCollectionsLive()).map((collection) => ({
+        aspectRatio: collection.aspectRatio,
         coverAlt: collection.coverAlt,
         coverImageUrl: collection.coverImageUrl,
+        height: collection.height,
         intro: collection.intro,
+        orientation: collection.orientation,
         photoCount: collection.photoCount,
         slug: collection.slug,
         title: collection.title,
+        width: collection.width,
       })),
     getMockCollections,
   );
