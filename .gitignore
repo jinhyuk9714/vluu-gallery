@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 node_modules
+.sanity
 .next
 dist
 .turbo
@@ -11,4 +12,3 @@ playwright-report
 test-results
 .vercel
 .worktrees
-
