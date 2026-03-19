@@ -51,6 +51,7 @@ type RawSiteSettings = {
 };
 
 type RawCollection = {
+  coverAlt?: string;
   coverImage?: RawSanityImage;
   intro?: string;
   photos?: Array<{
@@ -71,11 +72,12 @@ type RawAboutPage = {
     children?: Array<{ text?: string }>;
   }>;
   intro?: string;
+  portraitAlt?: string;
   portraitImage?: RawSanityImage;
   title?: string;
 };
 
-function normalizeCollection(raw: RawCollection): CollectionPageData {
+export function normalizeCollection(raw: RawCollection): CollectionPageData {
   const normalizedPhotos = raw.photos?.map((photo, index) => {
     const orientation: PhotoOrientation =
       index % 3 === 0 ? "landscape" : index % 3 === 1 ? "portrait" : "square";
@@ -93,7 +95,7 @@ function normalizeCollection(raw: RawCollection): CollectionPageData {
   }) ?? [];
 
   return {
-    coverAlt: raw.title ? `${raw.title} cover image` : "Collection cover image",
+    coverAlt: raw.coverAlt ?? (raw.title ? `${raw.title} cover image` : "Collection cover image"),
     coverImageUrl: raw.coverImage
       ? urlForImage(raw.coverImage, 1800)
       : "/placeholders/winter-transit-cover.svg",
@@ -105,7 +107,7 @@ function normalizeCollection(raw: RawCollection): CollectionPageData {
   };
 }
 
-function normalizeSiteSettings(raw: RawSiteSettings): SiteSettings {
+export function normalizeSiteSettings(raw: RawSiteSettings): SiteSettings {
   return {
     contactEmail: raw.contactEmail ?? "hello@example.com",
     featuredCollections:
@@ -131,7 +133,7 @@ function normalizeSiteSettings(raw: RawSiteSettings): SiteSettings {
   };
 }
 
-function normalizeAboutPage(raw: RawAboutPage): AboutPageData {
+export function normalizeAboutPage(raw: RawAboutPage): AboutPageData {
   return {
     body:
       raw.body
@@ -140,10 +142,10 @@ function normalizeAboutPage(raw: RawAboutPage): AboutPageData {
         )
         .filter((paragraph): paragraph is string => Boolean(paragraph)) ?? [],
     intro: raw.intro ?? "",
-    portraitAlt: raw.title ? `${raw.title} portrait` : "Portrait image",
-    portraitImageUrl: raw.portraitImage
-      ? urlForImage(raw.portraitImage, 1200)
-      : "/placeholders/portrait.svg",
+    portraitAlt: raw.portraitImage
+      ? raw.portraitAlt ?? (raw.title ? `${raw.title} portrait` : "Portrait image")
+      : undefined,
+    portraitImageUrl: raw.portraitImage ? urlForImage(raw.portraitImage, 1200) : undefined,
     title: raw.title ?? "About",
   };
 }

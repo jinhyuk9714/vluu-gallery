@@ -25,6 +25,7 @@ export const collectionsQuery = groq`
     title,
     "slug": slug.current,
     intro,
+    coverAlt,
     coverImage,
     "photos": photos[]->{
       title,
@@ -43,6 +44,7 @@ export const aboutPageQuery = groq`
     title,
     intro,
     body,
+    portraitAlt,
     portraitImage
   }
 `;

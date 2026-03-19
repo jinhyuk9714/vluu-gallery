@@ -58,6 +58,19 @@ function trimString(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function isValidLinkUrl(value) {
+  try {
+    const parsed = new URL(value);
+    return ["http:", "https:", "mailto:", "tel:"].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+}
+
 function normalizeFeaturedCollectionEntry(entry) {
   if (typeof entry === "string") {
     return entry.trim();
@@ -90,6 +103,8 @@ function normalizeSocialLinks(value, issues, parentPath) {
 
     if (!url) {
       issues.push(`${parentPath}[${index}].url is required.`);
+    } else if (!isValidLinkUrl(url)) {
+      issues.push(`${parentPath}[${index}].url must be a valid URL.`);
     }
 
     return { label, url };
@@ -257,6 +272,8 @@ function validateLaunchManifest(manifest) {
 
     if (!isNonEmptyString(siteSettings.contactEmail)) {
       issues.push("siteSettings.contactEmail is required.");
+    } else if (!isValidEmail(trimString(siteSettings.contactEmail))) {
+      issues.push("siteSettings.contactEmail must be a valid email address.");
     }
 
     const seenFeatured = new Set();

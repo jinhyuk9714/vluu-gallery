@@ -129,6 +129,47 @@ test("validateLaunchManifest reports missing alt and caption text", () => {
   );
 });
 
+test("validateLaunchManifest reports invalid contact details", () => {
+  const manifest = {
+    aboutPage: {
+      body: ["One paragraph"],
+      intro: "Intro",
+      title: "About",
+    },
+    collections: [
+      {
+        coverAlt: "Cover alt",
+        coverFile: "collections/alpha/cover.jpg",
+        intro: "Alpha intro",
+        photos: [
+          {
+            alt: "Alpha photo alt",
+            captionShort: "Alpha caption",
+            file: "collections/alpha/one.jpg",
+            slug: "alpha-photo",
+            title: "Alpha One",
+          },
+        ],
+        slug: "alpha",
+        title: "Alpha",
+      },
+    ],
+    siteSettings: {
+      contactEmail: "not-an-email",
+      featuredCollections: ["alpha"],
+      homeIntro: "Home intro",
+      siteDescription: "Site description",
+      siteTitle: "Gallery",
+      socialLinks: [{ label: "Instagram", url: "instagram-dot-com/example" }],
+    },
+  };
+
+  expectLaunchIssues(() => validateLaunchManifest(manifest), [
+    /contactEmail must be a valid email address/i,
+    /socialLinks\[0\]\.url must be a valid URL/i,
+  ]);
+});
+
 test("buildLaunchImportPlan preserves collection and featured order", () => {
   const manifest = {
     aboutPage: {

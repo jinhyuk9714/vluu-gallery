@@ -14,10 +14,9 @@ describe("parseAppEnv", () => {
     });
   });
 
-  it("marks sanity as configured only when project and dataset exist", () => {
+  it("marks sanity as configured when a project id exists, even if dataset uses the default", () => {
     expect(
       parseAppEnv({
-        NEXT_PUBLIC_SANITY_DATASET: "production",
         NEXT_PUBLIC_SANITY_PROJECT_ID: "abc12345",
         NEXT_PUBLIC_SANITY_STUDIO_URL: "https://studio.example.com",
         NEXT_PUBLIC_SITE_URL: "https://gallery.example.com",
@@ -30,7 +29,22 @@ describe("parseAppEnv", () => {
       sanityProjectId: "abc12345",
       siteUrl: "https://gallery.example.com",
       studioUrl: "https://studio.example.com",
+      });
+  });
+
+  it("treats blank env values as absent", () => {
+    expect(
+      parseAppEnv({
+        NEXT_PUBLIC_SANITY_DATASET: "   ",
+        NEXT_PUBLIC_SANITY_PROJECT_ID: "   ",
+      }),
+    ).toEqual({
+      isSanityConfigured: false,
+      revalidateSecret: undefined,
+      sanityDataset: "production",
+      sanityProjectId: undefined,
+      siteUrl: "http://localhost:3000",
+      studioUrl: "https://personal-gallery.sanity.studio",
     });
   });
 });
-
