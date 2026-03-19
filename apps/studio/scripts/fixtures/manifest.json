@@ -1,0 +1,42 @@
+{
+  "siteSettings": {
+    "siteTitle": "Gallery",
+    "siteDescription": "A compact fixture gallery.",
+    "homeIntro": "Intro",
+    "contactEmail": "hello@example.com",
+    "socialLinks": [
+      {
+        "label": "Instagram",
+        "url": "https://instagram.com/example"
+      }
+    ],
+    "featuredCollections": ["seoul-evenings"]
+  },
+  "aboutPage": {
+    "title": "About",
+    "intro": "Intro",
+    "body": ["One paragraph"],
+    "portraitFile": "about/portrait.jpg",
+    "portraitAlt": "Portrait alt"
+  },
+  "collections": [
+    {
+      "slug": "seoul-evenings",
+      "title": "Seoul Evenings",
+      "intro": "Fixture collection intro.",
+      "coverFile": "collections/seoul-evenings/cover.jpg",
+      "coverAlt": "Cover alt",
+      "photos": [
+        {
+          "slug": "han-river-blue-hour",
+          "title": "Han River Blue Hour",
+          "file": "collections/seoul-evenings/01.jpg",
+          "alt": "Photo alt",
+          "captionShort": "Photo caption",
+          "shotDate": "2025-10-12",
+          "locationLabel": "Mapo"
+        }
+      ]
+    }
+  ]
+}

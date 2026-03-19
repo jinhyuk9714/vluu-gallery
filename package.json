@@ -8,8 +8,9 @@
     "dev:studio": "pnpm --filter studio dev",
     "dev:web": "pnpm --filter web dev",
     "lint": "pnpm -r lint",
-    "test": "pnpm --filter web test",
+    "studio:import:launch": "pnpm --filter studio import:launch",
+    "studio:test:launch": "pnpm --filter studio test:launch-content",
+    "test": "pnpm --filter web test && pnpm studio:test:launch",
     "test:e2e": "pnpm --filter web test:e2e"
   }
 }
-
