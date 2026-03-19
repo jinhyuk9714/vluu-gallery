@@ -6,9 +6,13 @@
     "build": "sanity build",
     "deploy": "sanity deploy",
     "dev": "sanity dev",
-    "lint": "sanity schema validate"
+    "import:launch:dry-run": "node scripts/launch-content.mjs --dry-run",
+    "import:launch": "node scripts/launch-content.mjs",
+    "lint": "sanity schema validate",
+    "test:launch-content": "node --test scripts/launch-content.test.mjs"
   },
   "dependencies": {
+    "@sanity/client": "^7.17.0",
     "@sanity/vision": "^5.17.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",

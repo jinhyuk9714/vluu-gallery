@@ -199,6 +199,12 @@ const collection = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "coverAlt",
+      title: "Cover alt text",
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "photos",
       title: "Photos",
       type: "array",
@@ -249,6 +255,20 @@ const aboutPage = defineType({
       title: "Portrait image",
       type: "image",
       options: { hotspot: true },
+    }),
+    defineField({
+      name: "portraitAlt",
+      title: "Portrait alt text",
+      type: "string",
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          const parent = context.parent as { portraitImage?: unknown };
+          if (parent?.portraitImage && !value) {
+            return "Portrait alt text is required when a portrait image is present.";
+          }
+
+          return true;
+        }),
     }),
   ],
 });
