@@ -5,7 +5,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 export const metadata = buildMetadata({
   description: "Browse curated photography collections arranged as small visual essays.",
   pathname: "/collections",
-  title: "Collections | Sung Gallery",
+  title: "Collections | VLUU",
 });
 
 export default async function CollectionsPage() {
@@ -35,4 +35,3 @@ export default async function CollectionsPage() {
     </div>
   );
 }
-

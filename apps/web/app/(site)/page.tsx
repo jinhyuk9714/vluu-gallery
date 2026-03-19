@@ -10,7 +10,7 @@ export const metadata = buildMetadata({
     "A curated personal gallery of city light, transit rhythm, and quiet architectural moments.",
   imagePath: "/placeholders/seoul-evenings-cover.svg",
   pathname: "/",
-  title: "Sung Gallery",
+  title: "VLUU",
 });
 
 export default async function HomePage() {
@@ -99,4 +99,3 @@ export default async function HomePage() {
     </div>
   );
 }
-

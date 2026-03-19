@@ -149,7 +149,7 @@ export function getMockSiteSettings(): SiteSettings {
       "A personal edit of city light, transit rhythm, and quiet architectural moments. Short stories, sparse captions, and just enough structure to let the images breathe.",
     siteDescription:
       "A curated personal photography gallery with collection-led storytelling and restrained editorial design.",
-    siteTitle: "Sung Gallery",
+    siteTitle: "VLUU",
     socialLinks: SOCIAL_LINKS,
   };
 }
@@ -194,4 +194,3 @@ export function getMockCollectionSlugForPhoto(photoSlug: string): string | undef
 export function getMockOrderedPhotos(): PhotoSummary[] {
   return COLLECTIONS.flatMap((collection) => collection.photos);
 }
-

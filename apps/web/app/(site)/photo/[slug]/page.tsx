@@ -18,7 +18,7 @@ export async function generateMetadata({
     return buildMetadata({
       description: "Photo not found.",
       pathname: `/photo/${slug}`,
-      title: "Photo not found | Sung Gallery",
+      title: "Photo not found | VLUU",
     });
   }
 
@@ -26,7 +26,7 @@ export async function generateMetadata({
     description: photo.captionShort,
     imagePath: photo.imageUrl,
     pathname: `/photo/${photo.slug}`,
-    title: `${photo.title} | Sung Gallery`,
+    title: `${photo.title} | VLUU`,
   });
 }
 
@@ -134,4 +134,3 @@ export default async function PhotoPage({
     </div>
   );
 }
-

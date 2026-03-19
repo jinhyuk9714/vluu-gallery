@@ -17,6 +17,9 @@ const envSchema = z.object({
     z.string().trim().url().optional(),
   ),
   SANITY_REVALIDATE_SECRET: optionalEnvString,
+  VERCEL_ENV: optionalEnvString,
+  VERCEL_PROJECT_PRODUCTION_URL: optionalEnvString,
+  VERCEL_URL: optionalEnvString,
 });
 
 export interface AppEnv {
@@ -25,17 +28,24 @@ export interface AppEnv {
   sanityDataset: string;
   sanityProjectId?: string;
   siteUrl: string;
-  studioUrl: string;
+  studioUrl?: string;
 }
 
 export function parseAppEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
   const parsed = envSchema.parse(source);
   const sanityProjectId = parsed.NEXT_PUBLIC_SANITY_PROJECT_ID;
   const sanityDataset = parsed.NEXT_PUBLIC_SANITY_DATASET ?? "production";
-  const studioUrl =
-    parsed.NEXT_PUBLIC_SANITY_STUDIO_URL ??
-    "https://personal-gallery.sanity.studio";
-  const siteUrl = parsed.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const studioUrl = parsed.NEXT_PUBLIC_SANITY_STUDIO_URL;
+  const vercelEnv = parsed.VERCEL_ENV;
+  const vercelProductionUrl = parsed.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${parsed.VERCEL_PROJECT_PRODUCTION_URL}`
+    : undefined;
+  const vercelPreviewUrl = parsed.VERCEL_URL ? `https://${parsed.VERCEL_URL}` : undefined;
+  const inferredVercelUrl =
+    vercelEnv && vercelEnv !== "production"
+      ? vercelPreviewUrl ?? vercelProductionUrl
+      : vercelProductionUrl ?? vercelPreviewUrl;
+  const siteUrl = parsed.NEXT_PUBLIC_SITE_URL ?? inferredVercelUrl ?? "http://localhost:3000";
 
   return {
     isSanityConfigured: Boolean(sanityProjectId),

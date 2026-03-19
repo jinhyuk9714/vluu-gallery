@@ -18,7 +18,7 @@ export async function generateMetadata({
     return buildMetadata({
       description: "Collection not found.",
       pathname: `/collections/${slug}`,
-      title: "Collection not found | Sung Gallery",
+      title: "Collection not found | VLUU",
     });
   }
 
@@ -26,7 +26,7 @@ export async function generateMetadata({
     description: collection.intro,
     imagePath: collection.coverImageUrl,
     pathname: `/collections/${collection.slug}`,
-    title: `${collection.title} | Sung Gallery`,
+    title: `${collection.title} | VLUU`,
   });
 }
 
@@ -77,4 +77,3 @@ export default async function CollectionPage({
     </div>
   );
 }
-

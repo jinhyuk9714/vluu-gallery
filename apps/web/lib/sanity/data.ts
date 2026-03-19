@@ -125,7 +125,7 @@ export function normalizeSiteSettings(raw: RawSiteSettings): SiteSettings {
       })) ?? [],
     homeIntro: raw.homeIntro ?? "",
     siteDescription: raw.siteDescription ?? "",
-    siteTitle: raw.siteTitle ?? "Personal Gallery",
+    siteTitle: raw.siteTitle ?? "VLUU",
     socialLinks:
       raw.socialLinks?.flatMap((link) =>
         link.label && link.url ? [{ label: link.label, url: link.url }] : [],

@@ -4,10 +4,12 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const DEFAULT_API_VERSION = "2025-03-01";
-const DEFAULT_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "ppsg7ml5";
+const DEFAULT_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "ue1xr5ow";
 const DEFAULT_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
 const DEFAULT_WRITE_TOKEN = process.env.SANITY_API_WRITE_TOKEN ?? "";
 const WORKSPACE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+const TRANSIENT_ERROR_CODES = new Set(["ECONNRESET", "EPIPE", "ETIMEDOUT"]);
+const TRANSIENT_ERROR_MESSAGES = [/timed out/i, /\bEPIPE\b/i, /\bECONNRESET\b/i, /\bETIMEDOUT\b/i];
 const DEFAULT_SOURCE_DIR = resolve(
   WORKSPACE_ROOT,
   "content-source",
@@ -113,6 +115,10 @@ function normalizeSocialLinks(value, issues, parentPath) {
 
 function resolveRelativePath(sourceDir, relativePath) {
   return resolve(sourceDir, relativePath);
+}
+
+function createDocumentId(prefix, slug) {
+  return `${prefix}-${slug}`;
 }
 
 function assertFileExists(filePath, issues, label) {
@@ -362,11 +368,11 @@ function buildLaunchImportPlan(manifest, options = {}) {
 
   const collections = normalized.collections.map((collection) => ({
     ...collection,
-    documentId: `collection.${collection.slug}`,
+    documentId: createDocumentId("collection", collection.slug),
     coverPath: resolveRelativePath(sourceDir, collection.coverFile),
     photos: collection.photos.map((photo) => ({
       ...photo,
-      documentId: `photo.${photo.slug}`,
+      documentId: createDocumentId("photo", photo.slug),
       path: resolveRelativePath(sourceDir, photo.file),
     })),
   }));
@@ -414,12 +420,57 @@ function buildLaunchImportPlan(manifest, options = {}) {
 }
 
 async function uploadImageAsset(client, filePath) {
-  const stream = createReadStream(filePath);
-  const upload = await client.assets.upload("image", stream, {
-    filename: filePath.split(/[\\/]/).pop(),
+  const upload = await runWithRetries(async () => {
+    const stream = createReadStream(filePath);
+
+    return client.assets.upload("image", stream, {
+      filename: filePath.split(/[\\/]/).pop(),
+    });
   });
 
   return upload;
+}
+
+function isTransientSanityError(error) {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  if (
+    typeof error.code === "string" &&
+    TRANSIENT_ERROR_CODES.has(error.code.toUpperCase())
+  ) {
+    return true;
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  return TRANSIENT_ERROR_MESSAGES.some((pattern) => pattern.test(message));
+}
+
+function delay(ms) {
+  return new Promise((resolvePromise) => {
+    setTimeout(resolvePromise, ms);
+  });
+}
+
+async function runWithRetries(operation, { retries = 3, retryDelayMs = 750 } = {}) {
+  let lastError;
+
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+
+      if (attempt === retries || !isTransientSanityError(error)) {
+        throw error;
+      }
+
+      await delay(retryDelayMs * (attempt + 1));
+    }
+  }
+
+  throw lastError;
 }
 
 function createDocumentBase(documentId, type) {
@@ -534,7 +585,7 @@ async function importLaunchContent({
         title: photo.title,
       };
 
-      await client.createOrReplace(photoDoc);
+      await runWithRetries(() => client.createOrReplace(photoDoc));
       photoDocuments.push(photoDoc);
     }
 
@@ -558,7 +609,7 @@ async function importLaunchContent({
       title: collection.title,
     };
 
-    await client.createOrReplace(collectionDoc);
+    await runWithRetries(() => client.createOrReplace(collectionDoc));
     uploadedCollections.push(collectionDoc);
   }
 
@@ -587,14 +638,15 @@ async function importLaunchContent({
     };
   }
 
-  await client.createOrReplace(aboutPageDoc);
+  await runWithRetries(() => client.createOrReplace(aboutPageDoc));
 
-  await client.createOrReplace({
+  await runWithRetries(() =>
+    client.createOrReplace({
     ...createDocumentBase(plan.siteSettings.documentId, "siteSettings"),
     contactEmail: plan.siteSettings.contactEmail,
     featuredCollections: plan.siteSettings.featuredCollections.map((slug) => ({
       _key: slug,
-      _ref: `collection.${slug}`,
+      _ref: createDocumentId("collection", slug),
       _type: "reference",
     })),
     homeIntro: plan.siteSettings.homeIntro,
@@ -606,7 +658,8 @@ async function importLaunchContent({
       label: link.label,
       url: link.url,
     })),
-  });
+    }),
+  );
 
   const photoCount = uploadedCollections.reduce(
     (sum, collection) => sum + collection.photos.length,
@@ -626,6 +679,7 @@ export {
   buildLaunchImportPlan,
   importLaunchContent,
   readLaunchManifestFromFile,
+  uploadImageAsset,
   validateLaunchManifest,
 };
 

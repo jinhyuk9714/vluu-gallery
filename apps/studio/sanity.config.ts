@@ -5,7 +5,7 @@ import { structureTool } from "sanity/structure";
 import { schemaTypes } from "./schemaTypes";
 import { singletonTypes, structure } from "./structure";
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "ppsg7ml5";
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "ue1xr5ow";
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
 
 export default defineConfig({
@@ -23,11 +23,11 @@ export default defineConfig({
         ? previousOptions.filter((option) => !singletonTypes.has(option.templateId))
         : previousOptions,
   },
-  name: "personal-gallery-studio",
+  name: "vluu-studio",
   plugins: [structureTool({ structure }), visionTool()],
   projectId,
   schema: {
     types: schemaTypes,
   },
-  title: "Personal Gallery Studio",
+  title: "VLUU Studio",
 });

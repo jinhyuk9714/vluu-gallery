@@ -8,6 +8,7 @@
 - Set `NEXT_PUBLIC_SITE_URL` per environment:
   - Preview: the current `*.vercel.app` preview URL.
   - Production: Vercel's default production domain, for example `https://<project>.vercel.app`.
+- If `NEXT_PUBLIC_SITE_URL` is omitted on Vercel, the app falls back to Vercel's system URLs so preview and production metadata still resolve to the active deployment origin.
 - Use Preview Deployments for code review and validation before promoting content changes.
 - `SANITY_API_WRITE_TOKEN` is not required for this launch flow. The web app only reads from Sanity and accepts publish webhooks for revalidation.
 
@@ -15,6 +16,8 @@
 
 - Host `apps/studio` on Sanity Studio hosting
 - Reuse the same project ID and dataset as the web app
+- The current hosted Studio URL is `https://vluu-gallery.sanity.studio`
+- Keep `NEXT_PUBLIC_SANITY_STUDIO_URL` aligned with that hosted Studio URL in Preview and Production
 
 ## Revalidation
 

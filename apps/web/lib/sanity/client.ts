@@ -7,9 +7,8 @@ const env = parseAppEnv();
 export const sanityClient = createClient({
   apiVersion: "2025-03-01",
   dataset: env.sanityDataset,
-  projectId: env.sanityProjectId ?? "ppsg7ml5",
+  projectId: env.sanityProjectId ?? "ue1xr5ow",
   useCdn: true,
 });
 
 export const isSanityConfigured = env.isSanityConfigured;
-

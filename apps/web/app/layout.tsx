@@ -17,7 +17,7 @@ const publicSans = Public_Sans({
 export const metadata: Metadata = {
   description: "A curated personal photography gallery with collection-led storytelling.",
   metadataBase: new URL(getSiteOrigin()),
-  title: "Sung Gallery",
+  title: "VLUU",
 };
 
 export default function RootLayout({

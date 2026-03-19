@@ -10,7 +10,7 @@ describe("parseAppEnv", () => {
       sanityDataset: "production",
       sanityProjectId: undefined,
       siteUrl: "http://localhost:3000",
-      studioUrl: "https://personal-gallery.sanity.studio",
+      studioUrl: undefined,
     });
   });
 
@@ -29,7 +29,7 @@ describe("parseAppEnv", () => {
       sanityProjectId: "abc12345",
       siteUrl: "https://gallery.example.com",
       studioUrl: "https://studio.example.com",
-      });
+    });
   });
 
   it("treats blank env values as absent", () => {
@@ -44,7 +44,60 @@ describe("parseAppEnv", () => {
       sanityDataset: "production",
       sanityProjectId: undefined,
       siteUrl: "http://localhost:3000",
-      studioUrl: "https://personal-gallery.sanity.studio",
+      studioUrl: undefined,
+    });
+  });
+
+  it("falls back to the Vercel preview URL when NEXT_PUBLIC_SITE_URL is absent", () => {
+    expect(
+      parseAppEnv({
+        NEXT_PUBLIC_SANITY_PROJECT_ID: "abc12345",
+        VERCEL_ENV: "preview",
+        VERCEL_URL: "vluu-gallery-git-launch-abc123.vercel.app",
+      } as NodeJS.ProcessEnv),
+    ).toEqual({
+      isSanityConfigured: true,
+      revalidateSecret: undefined,
+      sanityDataset: "production",
+      sanityProjectId: "abc12345",
+      siteUrl: "https://vluu-gallery-git-launch-abc123.vercel.app",
+      studioUrl: undefined,
+    });
+  });
+
+  it("prefers the Vercel preview URL on preview deployments even when a production domain exists", () => {
+    expect(
+      parseAppEnv({
+        NEXT_PUBLIC_SANITY_PROJECT_ID: "abc12345",
+        VERCEL_ENV: "preview",
+        VERCEL_PROJECT_PRODUCTION_URL: "vluu-gallery.vercel.app",
+        VERCEL_URL: "vluu-gallery-git-launch-abc123.vercel.app",
+      } as NodeJS.ProcessEnv),
+    ).toEqual({
+      isSanityConfigured: true,
+      revalidateSecret: undefined,
+      sanityDataset: "production",
+      sanityProjectId: "abc12345",
+      siteUrl: "https://vluu-gallery-git-launch-abc123.vercel.app",
+      studioUrl: undefined,
+    });
+  });
+
+  it("prefers the Vercel production URL when available", () => {
+    expect(
+      parseAppEnv({
+        NEXT_PUBLIC_SANITY_PROJECT_ID: "abc12345",
+        VERCEL_ENV: "production",
+        VERCEL_PROJECT_PRODUCTION_URL: "vluu-gallery.vercel.app",
+        VERCEL_URL: "vluu-gallery-git-launch-abc123.vercel.app",
+      } as NodeJS.ProcessEnv),
+    ).toEqual({
+      isSanityConfigured: true,
+      revalidateSecret: undefined,
+      sanityDataset: "production",
+      sanityProjectId: "abc12345",
+      siteUrl: "https://vluu-gallery.vercel.app",
+      studioUrl: undefined,
     });
   });
 });

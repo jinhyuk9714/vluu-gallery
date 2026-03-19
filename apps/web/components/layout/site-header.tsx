@@ -15,7 +15,7 @@ export function SiteHeader() {
           className="font-serif text-xl tracking-[0.08em] text-[color:var(--color-ink)] transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[color:var(--color-background)]"
           href="/"
         >
-          Sung Gallery
+          VLUU
         </Link>
         <nav aria-label="Primary" className="flex items-center gap-4 sm:gap-6">
           {navItems.map((item) => (
@@ -32,4 +32,3 @@ export function SiteHeader() {
     </header>
   );
 }
-

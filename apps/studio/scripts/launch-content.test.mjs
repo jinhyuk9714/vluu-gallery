@@ -1,10 +1,14 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 
 import {
   LaunchManifestError,
   buildLaunchImportPlan,
   readLaunchManifestFromFile,
+  uploadImageAsset,
   validateLaunchManifest,
 } from "./launch-content.mjs";
 
@@ -257,6 +261,8 @@ test("buildLaunchImportPlan preserves collection and featured order", () => {
   assert.deepEqual(plan.siteSettings.socialLinks, [
     { label: "Instagram", url: "https://instagram.com/example" },
   ]);
+  assert.equal(plan.collections[0].documentId, "collection-first");
+  assert.equal(plan.collections[0].photos[0].documentId, "photo-first-1");
 });
 
 test("buildLaunchImportPlan reports missing files in staged launch content", () => {
@@ -301,4 +307,51 @@ test("buildLaunchImportPlan reports missing files in staged launch content", () 
       }),
     [/missing-cover\.jpg/i, /missing-photo\.jpg/i],
   );
+});
+
+test("uploadImageAsset retries transient upload failures", async () => {
+  const tempDir = mkdtempSync(join(tmpdir(), "launch-upload-"));
+  const filePath = join(tempDir, "test-image.jpg");
+  writeFileSync(filePath, "not-a-real-image");
+
+  let attempts = 0;
+  const client = {
+    assets: {
+      upload: async () => {
+        attempts += 1;
+
+        if (attempts === 1) {
+          const error = new Error("read ETIMEDOUT");
+          error.code = "ETIMEDOUT";
+          throw error;
+        }
+
+        return { _id: "image-test" };
+      },
+    },
+  };
+
+  const asset = await uploadImageAsset(client, filePath);
+
+  assert.equal(asset._id, "image-test");
+  assert.equal(attempts, 2);
+});
+
+test("uploadImageAsset does not retry non-transient failures", async () => {
+  const tempDir = mkdtempSync(join(tmpdir(), "launch-upload-"));
+  const filePath = join(tempDir, "test-image.jpg");
+  writeFileSync(filePath, "not-a-real-image");
+
+  let attempts = 0;
+  const client = {
+    assets: {
+      upload: async () => {
+        attempts += 1;
+        throw new Error("Invalid asset");
+      },
+    },
+  };
+
+  await assert.rejects(() => uploadImageAsset(client, filePath), /Invalid asset/);
+  assert.equal(attempts, 1);
 });

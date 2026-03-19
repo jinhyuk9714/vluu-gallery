@@ -6,7 +6,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 export const metadata = buildMetadata({
   description: "About the photographer and the pace behind the gallery.",
   pathname: "/about",
-  title: "About | Sung Gallery",
+  title: "About | VLUU",
 });
 
 export default async function AboutPage() {
@@ -42,4 +42,3 @@ export default async function AboutPage() {
     </div>
   );
 }
-

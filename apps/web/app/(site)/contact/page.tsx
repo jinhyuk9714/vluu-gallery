@@ -4,7 +4,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 export const metadata = buildMetadata({
   description: "Get in touch for conversation, commissions, or print inquiries.",
   pathname: "/contact",
-  title: "Contact | Sung Gallery",
+  title: "Contact | VLUU",
 });
 
 export default async function ContactPage() {
@@ -46,4 +46,3 @@ export default async function ContactPage() {
     </div>
   );
 }
-
