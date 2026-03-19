@@ -30,24 +30,30 @@ function skipWhenNoRealContent() {
 
 test("homepage, collections, about, and contact render core editorial content", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /quiet city studies/i })).toBeVisible();
-  await expect(page.getByRole("link", { name: /browse collections/i })).toBeVisible();
+  await expect(page.getByRole("main").getByText(/featured sequence/i)).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /a selected archive, cut as a sequence/i }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: /enter sequence/i })).toBeVisible();
+  await expect(page.getByRole("main").getByRole("link", { name: /^overview$/i })).toBeVisible();
   await expectCanonical(page, "/");
 
   await page.goto("/collections");
-  await expect(page.getByRole("heading", { name: /edited as sequences/i })).toBeVisible();
-  await expect(page.getByRole("link", { name: /seoul evenings/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^all sequences\.$/i })).toBeVisible();
+  await expect(
+    page.getByText(/the list reads as a line of image-led panels rather than a grid of cards/i),
+  ).toBeVisible();
   await expectCanonical(page, "/collections");
 
   await page.goto("/about");
-  await expect(page.getByRole("heading", { name: /^about$/i })).toBeVisible();
-  await expect(page.getByText(/small movements, quiet infrastructure/i)).toBeVisible();
+  await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByText(/this personal archive stays small on purpose/i)).toBeVisible();
   await expectCanonical(page, "/about");
 
   await page.goto("/contact");
-  await expect(
-    page.getByRole("main").getByRole("link", { name: /hello@example.com/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^contact$/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /reach out with context/i })).toBeVisible();
+  await expect(page.getByText(/commissions, editorial use, or print requests/i)).toBeVisible();
   await expectCanonical(page, "/contact");
 });
 
@@ -101,7 +107,9 @@ test("robots and sitemap reference the configured site origin", async ({ request
 test("missing routes render the not-found state", async ({ page }) => {
   const notFoundResponse = await page.goto("/missing-frame");
   expect(notFoundResponse?.status()).toBe(404);
-  await expect(page.getByRole("heading", { name: /this frame is not in the edit/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /this sequence is not in the edit/i })).toBeVisible();
+  await expect(page.getByText(/may have moved/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /return to overview/i })).toBeVisible();
 });
 
 test("revalidation endpoint rejects unsigned requests", async ({ request }) => {
@@ -143,7 +151,7 @@ test("real-content about page stays text-only", async ({ page }) => {
   skipWhenNoRealContent();
 
   await page.goto("/about");
-  await expect(page.getByRole("heading", { name: /^about$/i })).toBeVisible();
+  await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("main").locator("img")).toHaveCount(0);
 });
 

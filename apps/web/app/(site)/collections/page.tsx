@@ -3,33 +3,43 @@ import { getCollections } from "@/lib/sanity/data";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata = buildMetadata({
-  description: "Browse curated photography collections arranged as small visual essays.",
+  description: "Browse curated photography collections arranged as image-led portfolio panels.",
   pathname: "/collections",
-  title: "Collections | VLUU",
+  title: "All sequences | VLUU",
 });
 
 export default async function CollectionsPage() {
   const collections = await getCollections();
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
-      <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="space-y-4">
-          <p className="text-xs uppercase tracking-[0.28em] text-[color:var(--color-muted)]">
-            Collections
+    <div className="mx-auto flex w-full max-w-[1680px] flex-col gap-16 px-4 py-6 sm:px-6 lg:px-10 lg:gap-20 lg:py-8">
+      <section className="grid gap-8 border-b border-[var(--color-line)] pb-12 lg:grid-cols-[0.62fr_1.38fr] lg:items-end">
+        <div className="scene-reveal space-y-4 lg:pb-3">
+          <p className="text-xs uppercase tracking-[0.42em] text-[var(--color-steel)]">
+            All sequences
           </p>
-          <h1 className="font-serif text-5xl text-[color:var(--color-ink)] sm:text-6xl">
-            Edited as sequences, not dumps.
-          </h1>
+          <p className="max-w-xs text-sm leading-7 text-[var(--color-muted)]">
+            Two words matter here: edit and pace.
+          </p>
         </div>
-        <p className="max-w-xl text-base leading-8 text-[color:var(--color-muted)] lg:justify-self-end">
-          Each collection has its own pacing, cover image, and order. The site is meant to be traversed in these smaller, calmer units.
-        </p>
+        <div className="scene-reveal space-y-6">
+          <h1 className="max-w-5xl font-serif text-[clamp(4rem,10vw,10rem)] leading-[0.82] tracking-[-0.03em] text-[var(--color-ink)]">
+            All sequences.
+          </h1>
+          <p className="max-w-2xl text-base leading-8 text-[var(--color-muted)]">
+            Each set is cut down to a single run of frames. Covers stay large, copy stays spare, and the list reads as a line of image-led panels rather than a grid of cards.
+          </p>
+        </div>
       </section>
 
-      <section className="grid gap-10 lg:grid-cols-2">
-        {collections.map((collection) => (
-          <CollectionCard key={collection.slug} {...collection} />
+      <section className="grid gap-10">
+        {collections.map((collection, index) => (
+          <CollectionCard
+            key={collection.slug}
+            index={index}
+            variant="sequence"
+            {...collection}
+          />
         ))}
       </section>
     </div>

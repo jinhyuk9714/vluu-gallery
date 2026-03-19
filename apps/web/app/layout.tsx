@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Libre_Bodoni, Public_Sans } from "next/font/google";
+import { Instrument_Serif, Public_Sans } from "next/font/google";
 import "./globals.css";
 
 import { getSiteOrigin } from "@/lib/sanity/data";
 
-const bodoni = Libre_Bodoni({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-libre-bodoni",
+  variable: "--font-display",
+  weight: "400",
 });
 
 const publicSans = Public_Sans({
@@ -15,7 +16,7 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  description: "A curated personal photography gallery with collection-led storytelling.",
+  description: "VLUU presents curated photographic sequences with a stark, cinematic tone.",
   metadataBase: new URL(getSiteOrigin()),
   title: "VLUU",
 };
@@ -28,9 +29,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bodoni.variable} ${publicSans.variable} h-full antialiased`}
+      className={`${instrumentSerif.variable} ${publicSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-[var(--color-background)] text-[var(--color-ink)]">
+        {children}
+      </body>
     </html>
   );
 }

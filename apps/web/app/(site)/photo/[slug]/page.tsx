@@ -16,9 +16,9 @@ export async function generateMetadata({
 
   if (!photo) {
     return buildMetadata({
-      description: "Photo not found.",
+      description: "Frame not found.",
       pathname: `/photo/${slug}`,
-      title: "Photo not found | VLUU",
+      title: "Frame not found | VLUU",
     });
   }
 
@@ -48,89 +48,121 @@ export default async function PhotoPage({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
-      <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.22em] text-[color:var(--color-muted)]">
+    <div className="mx-auto flex w-full max-w-[1680px] flex-col gap-8 px-4 py-6 sm:px-6 lg:gap-10 lg:px-10 lg:py-8">
+      <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.24em] text-[var(--color-steel)]">
         <Link
-          className="transition hover:text-[color:var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[color:var(--color-background)]"
+          className="transition duration-300 hover:text-[var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
           href="/collections"
         >
-          Collections
+          All sequences
         </Link>
         <span>/</span>
         <Link
-          className="transition hover:text-[color:var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[color:var(--color-background)]"
+          className="transition duration-300 hover:text-[var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
           href={`/collections/${photo.collection.slug}`}
         >
           {photo.collection.title}
         </Link>
       </div>
 
-      <section className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="relative aspect-[4/5] overflow-hidden bg-[color:var(--color-surface)] lg:aspect-[4/4.8]">
+      <section className="grid gap-6 border-b border-[var(--color-line)] pb-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(16rem,0.4fr)] lg:items-end">
+        <div className="scene-reveal space-y-3">
+          <p className="text-xs uppercase tracking-[0.42em] text-[var(--color-steel)]">
+            Frame
+          </p>
+          <h1 className="max-w-5xl font-serif text-[clamp(3.6rem,8vw,8.8rem)] leading-[0.82] tracking-[-0.03em] text-[var(--color-ink)]">
+            {photo.title}
+          </h1>
+        </div>
+
+        <div className="grid gap-3 border-t border-[var(--color-line)] pt-5 text-xs uppercase tracking-[0.3em] text-[var(--color-steel)]">
+          <p>Info</p>
+          <p>{photo.collection.title}</p>
+          {photo.locationLabel ? <p>{photo.locationLabel}</p> : null}
+          {photo.shotDate ? <p>{photo.shotDate}</p> : null}
+        </div>
+      </section>
+
+      <section className="scene-image relative overflow-hidden border border-[var(--color-line)] bg-[var(--color-surface)] shadow-[0_30px_90px_rgba(17,17,17,0.16)]">
+        <div className="relative aspect-[16/11] min-h-[36rem] lg:min-h-[78vh]">
           <Image
             alt={photo.alt}
             className="object-cover"
             fill
             priority
-            sizes="(max-width: 1024px) 100vw, 58vw"
+            sizes="100vw"
             src={photo.imageUrl}
           />
         </div>
-        <div className="flex flex-col justify-between gap-10">
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-[0.28em] text-[color:var(--color-muted)]">
-                Selected frame
-              </p>
-              <h1 className="font-serif text-5xl text-[color:var(--color-ink)] sm:text-6xl">
-                {photo.title}
-              </h1>
-            </div>
-            <p className="max-w-xl text-base leading-8 text-[color:var(--color-muted)]">
-              {photo.captionShort}
-            </p>
-            <dl className="grid gap-4 border-t border-black/8 pt-6 text-sm text-[color:var(--color-muted)]">
-              {photo.locationLabel ? (
-                <div className="flex justify-between gap-6">
-                  <dt>Location</dt>
-                  <dd className="text-right text-[color:var(--color-ink)]">{photo.locationLabel}</dd>
-                </div>
-              ) : null}
-              {photo.shotDate ? (
-                <div className="flex justify-between gap-6">
-                  <dt>Date</dt>
-                  <dd className="text-right text-[color:var(--color-ink)]">{photo.shotDate}</dd>
-                </div>
-              ) : null}
-            </dl>
-          </div>
-
-          <nav aria-label="Photo pagination" className="grid gap-4 border-t border-black/8 pt-6 sm:grid-cols-2">
-            {photo.previousPhoto ? (
-              <Link
-                className="group flex flex-col gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[color:var(--color-background)]"
-                href={`/photo/${photo.previousPhoto.slug}`}
-              >
-                <span className="text-xs uppercase tracking-[0.24em] text-[color:var(--color-muted)]">Previous</span>
-                <span className="font-serif text-2xl text-[color:var(--color-ink)] transition group-hover:opacity-70">
-                  {photo.previousPhoto.title}
-                </span>
-              </Link>
-            ) : <div />}
-            {photo.nextPhoto ? (
-              <Link
-                className="group flex flex-col gap-1 text-left sm:text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[color:var(--color-background)]"
-                href={`/photo/${photo.nextPhoto.slug}`}
-              >
-                <span className="text-xs uppercase tracking-[0.24em] text-[color:var(--color-muted)]">Next</span>
-                <span className="font-serif text-2xl text-[color:var(--color-ink)] transition group-hover:opacity-70">
-                  {photo.nextPhoto.title}
-                </span>
-              </Link>
-            ) : null}
-          </nav>
-        </div>
       </section>
+
+      <section className="grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(18rem,0.38fr)] lg:items-start">
+        <div className="space-y-4">
+          <p className="max-w-2xl text-base leading-8 text-[var(--color-muted)]">
+            {photo.captionShort}
+          </p>
+        </div>
+
+        <dl className="grid gap-4 border-t border-[var(--color-line)] pt-5 text-sm text-[var(--color-muted)]">
+          <div className="flex justify-between gap-6">
+            <dt>Collection</dt>
+            <dd className="text-right text-[var(--color-ink)]">
+              <Link
+                className="transition hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
+                href={`/collections/${photo.collection.slug}`}
+              >
+                {photo.collection.title}
+              </Link>
+            </dd>
+          </div>
+          {photo.locationLabel ? (
+            <div className="flex justify-between gap-6">
+              <dt>Location</dt>
+              <dd className="text-right text-[var(--color-ink)]">{photo.locationLabel}</dd>
+            </div>
+          ) : null}
+          {photo.shotDate ? (
+            <div className="flex justify-between gap-6">
+              <dt>Date</dt>
+              <dd className="text-right text-[var(--color-ink)]">{photo.shotDate}</dd>
+            </div>
+          ) : null}
+        </dl>
+      </section>
+
+      <nav
+        aria-label="Photo pagination"
+        className="grid gap-4 border-t border-[var(--color-line)] pt-6 sm:grid-cols-2"
+      >
+        {photo.previousPhoto ? (
+          <Link
+            className="group flex min-h-40 flex-col justify-between border border-[var(--color-line)] bg-[var(--color-surface)] p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
+            href={`/photo/${photo.previousPhoto.slug}`}
+          >
+            <span className="text-xs uppercase tracking-[0.24em] text-[var(--color-steel)]">
+              Previous frame
+            </span>
+            <span className="max-w-sm font-serif text-[clamp(2rem,3vw,3.2rem)] leading-[0.9] text-[var(--color-ink)] transition duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0">
+              {photo.previousPhoto.title}
+            </span>
+          </Link>
+        ) : (
+          <div className="hidden sm:block" />
+        )}
+        {photo.nextPhoto ? (
+          <Link
+            className="group flex min-h-40 flex-col justify-between border border-[var(--color-line)] bg-[var(--color-surface)] p-5 text-left sm:text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
+            href={`/photo/${photo.nextPhoto.slug}`}
+          >
+            <span className="text-xs uppercase tracking-[0.24em] text-[var(--color-steel)]">
+              Next frame
+            </span>
+            <span className="max-w-sm self-start font-serif text-[clamp(2rem,3vw,3.2rem)] leading-[0.9] text-[var(--color-ink)] transition duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0 sm:self-end">
+              {photo.nextPhoto.title}
+            </span>
+          </Link>
+        ) : null}
+      </nav>
     </div>
   );
 }
