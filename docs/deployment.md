@@ -19,8 +19,4 @@
 
 ## Launch Checklist
 
-- Verify preview and production environment variables
-- Confirm 404, sitemap, robots, canonical, and OG metadata
-- Confirm homepage hero is the only prioritized LCP image
-- Confirm content updates refresh without full redeploy
-
+- See [release-checklist.md](./release-checklist.md) for the preview, production, publish validation, and rollback checklist.
