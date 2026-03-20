@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ProportionalImage } from "@/components/site/proportional-image";
 import type { CollectionPageData, PhotoOrientation, SiteSettings } from "@/types/content";
@@ -17,6 +18,8 @@ type ReelItem = {
 };
 
 type Density = "s" | "m" | "l";
+
+const AUTOPLAY_INTERVAL_MS = 6000;
 
 function getColumnsClass(density: Density) {
   switch (density) {
@@ -40,9 +43,21 @@ export function HomeScene({
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [density, setDensity] = useState<Density>("m");
+  const [hasPointerMoved, setHasPointerMoved] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocusWithin, setIsFocusWithin] = useState(false);
+  const [isDocumentVisible, setIsDocumentVisible] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   const activeCollection = featuredCollections[activeIndex] ?? featuredCollections[0];
-  const previewCollection = featuredCollections[(activeIndex + 1) % featuredCollections.length];
+  const slideCount = featuredCollections.length;
+  const slideOffset = slideCount > 0 ? activeIndex * (100 / slideCount) : 0;
+  const isAutoplayPaused =
+    slideCount < 2 ||
+    (hasPointerMoved && isHovered) ||
+    isFocusWithin ||
+    !isDocumentVisible ||
+    prefersReducedMotion;
 
   const dedupedReelItems = useMemo(() => {
     const seen = new Set<string>();
@@ -56,36 +71,107 @@ export function HomeScene({
     });
   }, [reelItems]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateReducedMotionPreference = () => {
+      setPrefersReducedMotion(mediaQuery.matches);
+    };
+
+    updateReducedMotionPreference();
+    mediaQuery.addEventListener("change", updateReducedMotionPreference);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateReducedMotionPreference);
+    };
+  }, []);
+
+  useEffect(() => {
+    const updateVisibility = () => {
+      setIsDocumentVisible(document.visibilityState === "visible");
+    };
+
+    updateVisibility();
+    document.addEventListener("visibilitychange", updateVisibility);
+
+    return () => {
+      document.removeEventListener("visibilitychange", updateVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isAutoplayPaused) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setActiveIndex((currentIndex) => (currentIndex + 1) % slideCount);
+    }, AUTOPLAY_INTERVAL_MS);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [activeIndex, isAutoplayPaused, slideCount]);
+
   if (!activeCollection) {
     return null;
   }
 
   return (
     <div className="pb-12">
-      <section className="relative overflow-hidden bg-[var(--color-surface)]">
-        <div className="grid grid-cols-1 lg:min-h-[100svh] lg:grid-cols-[0.37fr_0.63fr]">
-          <div className="relative hidden border-r border-[var(--color-line)] bg-[var(--color-surface)] lg:flex lg:min-h-[100svh] lg:items-end">
-            <ProportionalImage
-              alt={previewCollection?.coverAlt ?? activeCollection.coverAlt}
-              className="scene-image max-h-[100svh] w-full object-contain object-left-bottom"
-              height={previewCollection?.height ?? activeCollection.height}
-              priority
-              sizes="38vw"
-              src={previewCollection?.coverImageUrl ?? activeCollection.coverImageUrl}
-              width={previewCollection?.width ?? activeCollection.width}
-            />
-          </div>
-          <div className="relative flex items-end bg-[var(--color-surface)] lg:min-h-[100svh]">
-            <ProportionalImage
-              alt={activeCollection.coverAlt}
-              className="scene-image max-h-[84svh] w-full object-contain object-center lg:max-h-[100svh]"
-              height={activeCollection.height}
-              priority
-              sizes="100vw"
-              src={activeCollection.coverImageUrl}
-              width={activeCollection.width}
-            />
-          </div>
+      <section
+        className="relative min-h-[100svh] overflow-hidden bg-[var(--color-surface)]"
+        data-testid="home-hero"
+        onBlurCapture={(event) => {
+          const nextTarget = event.relatedTarget;
+          if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
+            setIsFocusWithin(false);
+          }
+        }}
+        onFocusCapture={() => {
+          setIsFocusWithin(true);
+        }}
+        onMouseEnter={() => {
+          setIsHovered(true);
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+        }}
+        onPointerMove={(event) => {
+          if (event.movementX !== 0 || event.movementY !== 0) {
+            setHasPointerMoved(true);
+          }
+        }}
+      >
+        <div
+          className="absolute inset-0 flex min-h-[100svh] transition-transform duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transition-none"
+          data-testid="hero-track"
+          style={{
+            transform: `translate3d(-${slideOffset}%, 0, 0)`,
+            width: `${slideCount * 100}%`,
+          }}
+        >
+          {featuredCollections.map((collection, index) => (
+            <div
+              key={collection.slug}
+              aria-hidden={index !== activeIndex}
+              className="relative min-h-[100svh] flex-none overflow-hidden bg-[var(--color-surface)]"
+              data-testid="hero-slide"
+              style={{ width: `${100 / slideCount}%` }}
+            >
+              <Image
+                alt={collection.coverAlt}
+                className="scene-image object-cover"
+                fill
+                priority={index === 0}
+                sizes="100vw"
+                src={collection.coverImageUrl}
+              />
+            </div>
+          ))}
         </div>
 
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0)_24%,rgba(0,0,0,0.18)_100%)]" />
@@ -101,9 +187,11 @@ export function HomeScene({
                     key={collection.slug}
                     aria-label={`Open featured collection ${collection.title}`}
                     className={`transition-opacity ${
-                      isActive ? "opacity-100" : "opacity-0 hover:opacity-75 sm:opacity-75"
+                      isActive ? "opacity-100" : "opacity-55 hover:opacity-80"
                     }`}
-                    onClick={() => setActiveIndex(index)}
+                    onClick={() => {
+                      setActiveIndex(index);
+                    }}
                     type="button"
                   >
                     {String(index + 1).padStart(2, "0")}
@@ -113,7 +201,10 @@ export function HomeScene({
             </div>
 
             <div className="pointer-events-auto min-w-0 self-end">
-              <p className="font-serif text-[clamp(2rem,3vw,3rem)] leading-[0.9] tracking-[-0.04em] text-white">
+              <p
+                className="font-serif text-[clamp(2rem,3vw,3rem)] leading-[0.9] tracking-[-0.04em] text-white"
+                data-testid="hero-title"
+              >
                 {activeCollection.title}
               </p>
               <Link

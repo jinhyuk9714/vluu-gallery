@@ -6,7 +6,7 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "mkdir -p test-results && eslint .",
     "test": "vitest run",
     "test:e2e": "playwright test"
   },
