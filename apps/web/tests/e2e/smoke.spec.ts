@@ -28,18 +28,14 @@ function skipWhenNoRealContent() {
   );
 }
 
-test("homepage, collections, about, and contact render core editorial content", async ({ page }) => {
+test("homepage, about, and contact render core editorial content without collections navigation", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("link", { name: /home/i })).toBeVisible();
-  await expect(page.getByRole("link", { name: /collections/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /contact/i })).toBeVisible();
-  await expect(page.getByRole("main").getByText(/view collection/i).first()).toBeVisible();
   await expect(page.getByRole("main").getByText(/^scroll$/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /collections/i })).toHaveCount(0);
+  await expect(page.getByRole("main").getByText(/view collection/i)).toHaveCount(0);
   await expectCanonical(page, "/");
-
-  await page.goto("/collections");
-  await expect(page.getByRole("main").getByText(/view collection/i).first()).toBeVisible();
-  await expectCanonical(page, "/collections");
 
   await page.goto("/about");
   await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toBeVisible();
@@ -53,10 +49,7 @@ test("homepage, collections, about, and contact render core editorial content", 
   await expectCanonical(page, "/contact");
 });
 
-test("sitemap exposes collection and photo routes that resolve successfully", async ({
-  page,
-  request,
-}) => {
+test("sitemap exposes home, about, contact, and photo routes without collection URLs", async ({ page, request }) => {
   const sitemapResponse = await request.get("/sitemap.xml");
   expect(sitemapResponse.ok()).toBeTruthy();
 
@@ -65,24 +58,17 @@ test("sitemap exposes collection and photo routes that resolve successfully", as
 
   expect(urls).toContain(siteOrigin);
   expect(urls).toContain(`${siteOrigin}/about`);
-  expect(urls).toContain(`${siteOrigin}/collections`);
   expect(urls).toContain(`${siteOrigin}/contact`);
+  expect(urls.some((url) => new URL(url).pathname.startsWith("/collections"))).toBe(false);
 
-  const collectionUrl = urls.find((url) => {
-    const pathname = new URL(url).pathname;
-    return pathname.startsWith("/collections/") && pathname !== "/collections/";
-  });
   const photoUrl = urls.find((url) => new URL(url).pathname.startsWith("/photo/"));
 
-  expect(collectionUrl).toBeDefined();
   expect(photoUrl).toBeDefined();
 
-  for (const url of [collectionUrl, photoUrl]) {
-    const response = await page.goto(url!);
-    expect(response?.status()).toBe(200);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expectCanonical(page, new URL(url!).pathname);
-  }
+  const response = await page.goto(photoUrl!);
+  expect(response?.status()).toBe(200);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expectCanonical(page, new URL(photoUrl!).pathname);
 });
 
 test("robots and sitemap reference the configured site origin", async ({ request }) => {
@@ -108,6 +94,23 @@ test("missing routes render the not-found state", async ({ page }) => {
   await expect(page.getByRole("link", { name: /return to overview/i })).toBeVisible();
 });
 
+test("legacy collection routes redirect permanently to the homepage", async ({ page, request }) => {
+  const collectionIndexResponse = await request.get("/collections", {
+    maxRedirects: 0,
+  });
+  expect(collectionIndexResponse.status()).toBe(308);
+  expect(collectionIndexResponse.headers()["location"]).toBe("/");
+
+  const collectionDetailResponse = await request.get("/collections/seoul-evenings", {
+    maxRedirects: 0,
+  });
+  expect(collectionDetailResponse.status()).toBe(308);
+  expect(collectionDetailResponse.headers()["location"]).toBe("/");
+
+  await page.goto("/collections/seoul-evenings");
+  await expect(page).toHaveURL(/\/$/);
+});
+
 test("revalidation endpoint rejects unsigned requests", async ({ request }) => {
   const response = await request.post("/api/revalidate", {
     data: { _type: "siteSettings" },
@@ -116,7 +119,18 @@ test("revalidation endpoint rejects unsigned requests", async ({ request }) => {
   expect(response.status()).toBe(401);
 });
 
-test("real-content launch exposes at least two collections and 22 photos in the sitemap", async ({
+test("photo detail removes collection context and navigates across the full archive", async ({
+  page,
+}) => {
+  await page.goto("/photo/condensation-window");
+
+  await expect(page.getByRole("heading", { level: 1, name: /condensation window/i })).toBeVisible();
+  await expect(page.getByText(/^collection$/i)).toHaveCount(0);
+  await expect(page.getByRole("link", { name: /prev:\s*bridge reflections/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /next:\s*fare beep/i })).toBeVisible();
+});
+
+test("real-content launch exposes at least 22 photos in the sitemap without collection URLs", async ({
   page,
   request,
 }) => {
@@ -127,20 +141,16 @@ test("real-content launch exposes at least two collections and 22 photos in the 
 
   const urls = extractLocs(await sitemapResponse.text());
   const pathnames = urls.map((url) => new URL(url).pathname);
-  const collectionUrls = pathnames.filter(
-    (pathname) => pathname.startsWith("/collections/") && pathname !== "/collections/",
-  );
   const photoUrls = pathnames.filter((pathname) => pathname.startsWith("/photo/"));
 
-  expect(collectionUrls.length).toBeGreaterThanOrEqual(2);
   expect(photoUrls.length).toBeGreaterThanOrEqual(22);
+  expect(pathnames.some((pathname) => pathname.startsWith("/collections"))).toBe(false);
 
-  for (const pathname of [collectionUrls[0], photoUrls[0]]) {
-    const response = await page.goto(new URL(pathname, siteOrigin).toString());
-    expect(response?.status()).toBe(200);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expectCanonical(page, pathname);
-  }
+  const pathname = photoUrls[0];
+  const response = await page.goto(new URL(pathname, siteOrigin).toString());
+  expect(response?.status()).toBe(200);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expectCanonical(page, pathname);
 });
 
 test("real-content about page stays text-only", async ({ page }) => {
@@ -176,7 +186,7 @@ test("revalidation endpoint accepts signed launch payloads when a secret is conf
 
   expect(response.status()).toBe(200);
   expect(await response.json()).toEqual({
-    revalidated: ["/", "/about", "/collections", "/contact"],
+    revalidated: ["/", "/about", "/contact"],
     type: "siteSettings",
   });
 });

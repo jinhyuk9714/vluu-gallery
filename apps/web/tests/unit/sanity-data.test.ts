@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { getMockPhotoBySlug } from "@/lib/mock-data";
 import { normalizeAboutPage, normalizeCollection } from "@/lib/sanity/data";
 
 describe("sanity data normalization", () => {
@@ -86,5 +87,19 @@ describe("sanity data normalization", () => {
 
     expect(aboutPage.portraitAlt).toBe("Portrait beside a train window.");
     expect(aboutPage.portraitImageUrl).toContain("fit=max");
+  });
+
+  it("uses a global photo sequence and removes public collection context", () => {
+    const firstWinterPhoto = getMockPhotoBySlug("condensation-window");
+
+    expect(firstWinterPhoto?.previousPhoto).toEqual({
+      slug: "bridge-reflections",
+      title: "Bridge Reflections",
+    });
+    expect(firstWinterPhoto?.nextPhoto).toEqual({
+      slug: "fare-beep",
+      title: "Fare Beep",
+    });
+    expect(firstWinterPhoto).not.toHaveProperty("collection");
   });
 });

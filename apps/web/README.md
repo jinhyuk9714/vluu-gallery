@@ -1,4 +1,4 @@
-`apps/web` is the public gallery site for personal photo collections.
+`apps/web` is the public gallery site for a personal photography archive.
 
 ## Development
 

@@ -4,7 +4,6 @@ import { parseAppEnv } from "@/lib/env";
 import {
   getMockAboutPage,
   getMockCollectionBySlug,
-  getMockCollectionSlugForPhoto,
   getMockCollectionSlugs,
   getMockCollections,
   getMockHomePageData,
@@ -204,6 +203,10 @@ const fetchCollectionsLive = cache(async () => {
   return rawCollections.map(normalizeCollection);
 });
 
+function getOrderedPhotosFromCollections(collections: CollectionPageData[]) {
+  return collections.flatMap((collection) => collection.photos);
+}
+
 const fetchSiteSettingsLive = cache(async () => {
   const rawSettings = await sanityClient.fetch<RawSiteSettings>(siteSettingsQuery);
   return normalizeSiteSettings(rawSettings);
@@ -256,25 +259,23 @@ export async function getPhotoBySlug(slug: string): Promise<PhotoPageData | unde
   return withFallback(
     async () => {
       const collections = await fetchCollectionsLive();
+      const orderedPhotos = getOrderedPhotosFromCollections(collections);
+      const index = orderedPhotos.findIndex((photo) => photo.slug === slug);
 
-      for (const collection of collections) {
-        const index = collection.photos.findIndex((photo) => photo.slug === slug);
-        if (index >= 0) {
-          const photo = collection.photos[index];
-          const previousPhoto = index > 0 ? collection.photos[index - 1] : undefined;
-          const nextPhoto = index < collection.photos.length - 1 ? collection.photos[index + 1] : undefined;
+      if (index >= 0) {
+        const photo = orderedPhotos[index];
+        const previousPhoto = index > 0 ? orderedPhotos[index - 1] : undefined;
+        const nextPhoto = index < orderedPhotos.length - 1 ? orderedPhotos[index + 1] : undefined;
 
-          return {
-            ...photo,
-            collection: { slug: collection.slug, title: collection.title },
-            nextPhoto: nextPhoto
-              ? { slug: nextPhoto.slug, title: nextPhoto.title }
-              : undefined,
-            previousPhoto: previousPhoto
-              ? { slug: previousPhoto.slug, title: previousPhoto.title }
-              : undefined,
-          };
-        }
+        return {
+          ...photo,
+          nextPhoto: nextPhoto
+            ? { slug: nextPhoto.slug, title: nextPhoto.title }
+            : undefined,
+          previousPhoto: previousPhoto
+            ? { slug: previousPhoto.slug, title: previousPhoto.title }
+            : undefined,
+        };
       }
 
       return undefined;
@@ -343,7 +344,7 @@ export async function getCollectionSlugForPhoto(photoSlug: string): Promise<stri
       (await fetchCollectionsLive()).find((collection) =>
         collection.photos.some((photo) => photo.slug === photoSlug),
       )?.slug,
-    () => getMockCollectionSlugForPhoto(photoSlug),
+    () => undefined,
   );
 }
 

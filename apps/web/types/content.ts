@@ -41,7 +41,6 @@ export interface PhotoNavItem {
 }
 
 export interface PhotoPageData extends PhotoSummary {
-  collection: Pick<CollectionCard, "slug" | "title">;
   nextPhoto?: PhotoNavItem;
   previousPhoto?: PhotoNavItem;
 }

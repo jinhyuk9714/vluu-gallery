@@ -5,16 +5,12 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/", label: "Home" },
-  { href: "/collections", label: "Collections" },
   { href: "/about", label: "About" },
 ];
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const overlayTone =
-    pathname === "/" ||
-    pathname.startsWith("/photo/") ||
-    (pathname.startsWith("/collections/") && pathname !== "/collections");
+  const overlayTone = pathname === "/" || pathname.startsWith("/photo/");
   const textClass = overlayTone ? "text-white" : "text-[var(--color-ink)]";
 
   return (

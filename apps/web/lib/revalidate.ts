@@ -14,18 +14,13 @@ export function resolveRevalidationTargets(payload: RevalidatePayload) {
 
   switch (payload._type) {
     case "siteSettings":
-      return ["/", "/about", "/collections", "/contact"];
+      return ["/", "/about", "/contact"];
     case "aboutPage":
       return ["/about"];
     case "collection":
-      return slug ? ["/", "/collections", `/collections/${slug}`] : ["/", "/collections"];
+      return ["/"];
     case "photo":
-      return slug
-        ? [
-            `/photo/${slug}`,
-            ...(payload.collectionSlug ? [`/collections/${payload.collectionSlug}`] : []),
-          ]
-        : [];
+      return slug ? [`/photo/${slug}`, "/"] : [];
     default:
       return [];
   }

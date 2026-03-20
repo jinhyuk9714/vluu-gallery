@@ -2,7 +2,6 @@ import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 import { parseAppEnv } from "@/lib/env";
-import { getCollectionSlugForPhoto } from "@/lib/sanity/data";
 import { resolveRevalidationTargets, type RevalidatePayload } from "@/lib/revalidate";
 
 export async function POST(request: NextRequest) {
@@ -19,15 +18,9 @@ export async function POST(request: NextRequest) {
   const payload = (await request.json()) as RevalidatePayload;
   const slug =
     typeof payload.slug === "string" ? payload.slug : payload.slug?.current;
-  const collectionSlug =
-    payload.collectionSlug ??
-    (payload._type === "photo" && slug
-      ? await getCollectionSlugForPhoto(slug)
-      : undefined);
 
   const targets = resolveRevalidationTargets({
     ...payload,
-    collectionSlug,
     slug,
   });
 

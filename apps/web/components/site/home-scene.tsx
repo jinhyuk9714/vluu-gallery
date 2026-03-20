@@ -207,12 +207,6 @@ export function HomeScene({
               >
                 {activeCollection.title}
               </p>
-              <Link
-                className="mt-1 inline-flex items-center gap-2 text-[1.05rem] leading-none text-white hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
-                href={`/collections/${activeCollection.slug}`}
-              >
-                View Collection
-              </Link>
             </div>
 
             <p className="pointer-events-none text-[0.95rem] leading-none text-white">Scroll</p>
@@ -221,14 +215,11 @@ export function HomeScene({
       </section>
 
       <section className="mx-auto w-full max-w-[1720px] px-4 pb-8 pt-8 sm:px-6 lg:px-10 lg:pb-10 lg:pt-10">
-        <Link
-          className="scene-reveal block max-w-[12ch] font-serif text-[clamp(3.8rem,8.8vw,8.8rem)] leading-[0.88] tracking-[-0.055em] text-[var(--color-ink)] transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] sm:max-w-none"
-          href={`/collections/${activeCollection.slug}`}
-        >
+        <p className="scene-reveal block max-w-[12ch] font-serif text-[clamp(3.8rem,8.8vw,8.8rem)] leading-[0.88] tracking-[-0.055em] text-[var(--color-ink)] sm:max-w-none">
           {site.siteTitle}
           <span className="block sm:inline"> — </span>
           <span className="block sm:inline">Photographic Sequences</span>
-        </Link>
+        </p>
       </section>
 
       <section className="mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-10">

@@ -144,28 +144,23 @@ export function getMockCollectionBySlug(slug: string): CollectionPageData | unde
 }
 
 export function getMockPhotoBySlug(slug: string): PhotoPageData | undefined {
-  for (const collection of COLLECTIONS) {
-    const index = collection.photos.findIndex((photo) => photo.slug === slug);
+  const orderedPhotos = getMockOrderedPhotos();
+  const index = orderedPhotos.findIndex((photo) => photo.slug === slug);
 
-    if (index >= 0) {
-      const photo = collection.photos[index];
-      const previousPhoto = index > 0 ? collection.photos[index - 1] : undefined;
-      const nextPhoto = index < collection.photos.length - 1 ? collection.photos[index + 1] : undefined;
+  if (index >= 0) {
+    const photo = orderedPhotos[index];
+    const previousPhoto = index > 0 ? orderedPhotos[index - 1] : undefined;
+    const nextPhoto = index < orderedPhotos.length - 1 ? orderedPhotos[index + 1] : undefined;
 
-      return {
-        ...photo,
-        collection: {
-          slug: collection.slug,
-          title: collection.title,
-        },
-        nextPhoto: nextPhoto
-          ? { slug: nextPhoto.slug, title: nextPhoto.title }
-          : undefined,
-        previousPhoto: previousPhoto
-          ? { slug: previousPhoto.slug, title: previousPhoto.title }
-          : undefined,
-      };
-    }
+    return {
+      ...photo,
+      nextPhoto: nextPhoto
+        ? { slug: nextPhoto.slug, title: nextPhoto.title }
+        : undefined,
+      previousPhoto: previousPhoto
+        ? { slug: previousPhoto.slug, title: previousPhoto.title }
+        : undefined,
+    };
   }
 
   return undefined;
@@ -178,7 +173,7 @@ export function getMockSiteSettings(): SiteSettings {
     homeIntro:
       "A personal edit of city light, transit rhythm, and quiet architectural moments. Short stories, sparse captions, and just enough structure to let the images breathe.",
     siteDescription:
-      "A curated personal photography gallery with collection-led storytelling and restrained editorial design.",
+      "A curated personal photography gallery with photo-first sequencing and restrained editorial design.",
     siteTitle: "VLUU",
     socialLinks: SOCIAL_LINKS,
   };

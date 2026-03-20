@@ -25,17 +25,8 @@ export default async function HomePage() {
     await getCollectionBySlug(latestCollection.slug),
   ].filter((collection): collection is NonNullable<typeof collection> => Boolean(collection));
   const collectionsForScene = resolvedCollections.length > 0 ? resolvedCollections : fallbackCollections;
-  const reelItems = collectionsForScene.flatMap((collection) => [
-    {
-      alt: collection.coverAlt,
-      aspectRatio: collection.aspectRatio,
-      height: collection.height,
-      href: `/collections/${collection.slug}`,
-      imageUrl: collection.coverImageUrl,
-      orientation: collection.orientation,
-      width: collection.width,
-    },
-    ...collection.photos.map((photo) => ({
+  const reelItems = collectionsForScene.flatMap((collection) =>
+    collection.photos.map((photo) => ({
       alt: photo.alt,
       aspectRatio: photo.aspectRatio,
       height: photo.height,
@@ -44,7 +35,7 @@ export default async function HomePage() {
       orientation: photo.orientation,
       width: photo.width,
     })),
-  ]);
+  );
 
   return (
     <HomeScene

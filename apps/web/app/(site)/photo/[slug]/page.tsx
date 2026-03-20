@@ -71,13 +71,6 @@ export default async function PhotoPage({
         <div className="space-y-8">
           <p className="max-w-2xl text-base leading-7 text-[var(--color-ink)]">{photo.captionShort}</p>
           <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
-            <p className="text-[0.95rem] uppercase leading-none text-[var(--color-ink)]">Collection</p>
-            <Link
-              className="text-base leading-7 text-[var(--color-ink)] hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
-              href={`/collections/${photo.collection.slug}`}
-            >
-              {photo.collection.title}
-            </Link>
             {photo.locationLabel ? (
               <>
                 <p className="text-[0.95rem] uppercase leading-none text-[var(--color-ink)]">Location</p>

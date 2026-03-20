@@ -13,6 +13,8 @@
 # testing
 /coverage
 /playwright-report
+/test-results/
+!/test-results/
 /test-results/*
 !/test-results/.gitkeep
 
