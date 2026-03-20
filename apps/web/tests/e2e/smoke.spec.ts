@@ -130,6 +130,37 @@ test("photo detail removes collection context and navigates across the full arch
   await expect(page.getByRole("link", { name: /next:\s*fare beep/i })).toBeVisible();
 });
 
+test("photo detail hero preserves the original image ratio instead of cropping to cover", async ({
+  page,
+}) => {
+  await page.goto("/photo/condensation-window");
+
+  const metrics = await page
+    .getByRole("main")
+    .locator("section")
+    .first()
+    .locator("img")
+    .first()
+    .evaluate((image: HTMLImageElement) => {
+      const rect = image.getBoundingClientRect();
+      const styles = window.getComputedStyle(image);
+
+      return {
+        naturalHeight: image.naturalHeight,
+        naturalWidth: image.naturalWidth,
+        objectFit: styles.objectFit,
+        renderedHeight: rect.height,
+        renderedWidth: rect.width,
+      };
+    });
+
+  const naturalAspectRatio = metrics.naturalWidth / metrics.naturalHeight;
+  const renderedAspectRatio = metrics.renderedWidth / metrics.renderedHeight;
+
+  expect(metrics.objectFit).not.toBe("cover");
+  expect(Math.abs(renderedAspectRatio - naturalAspectRatio)).toBeLessThan(0.03);
+});
+
 test("real-content launch exposes at least 22 photos in the sitemap without collection URLs", async ({
   page,
   request,
