@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ProportionalImage } from "@/components/site/proportional-image";
+import { PhotoDetailHero } from "@/components/site/photo-detail-hero";
 import { getPhotoBySlug, getPhotoSlugs } from "@/lib/sanity/data";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -49,25 +49,13 @@ export default async function PhotoPage({
 
   return (
     <div className="pb-10">
-      <section className="overflow-hidden bg-[var(--color-surface)]">
-        <div className="relative">
-          <ProportionalImage
-          alt={photo.alt}
-            className="block h-auto w-full"
-            height={photo.height}
-            priority
-            sizes="100vw"
-            src={photo.imageUrl}
-            width={photo.width}
-          />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.1)_34%,rgba(0,0,0,0.5)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-[1720px] px-4 pb-5 sm:px-6 lg:px-10 lg:pb-8">
-            <h1 className="max-w-[10ch] font-serif text-[clamp(3.8rem,8vw,8.6rem)] leading-[0.88] tracking-[-0.05em] text-white">
-              {photo.title}
-            </h1>
-          </div>
-        </div>
-      </section>
+      <PhotoDetailHero
+        alt={photo.alt}
+        height={photo.height}
+        imageUrl={photo.imageUrl}
+        title={photo.title}
+        width={photo.width}
+      />
 
       <section className="mx-auto grid w-full max-w-[1720px] gap-6 px-4 py-20 sm:px-6 lg:grid-cols-[0.48fr_0.52fr] lg:px-10">
         <p className="text-[0.95rem] uppercase leading-none text-[var(--color-ink)]">Frame</p>

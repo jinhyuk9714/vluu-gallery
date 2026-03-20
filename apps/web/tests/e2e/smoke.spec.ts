@@ -161,6 +161,63 @@ test("photo detail hero preserves the original image ratio instead of cropping t
   expect(Math.abs(renderedAspectRatio - naturalAspectRatio)).toBeLessThan(0.03);
 });
 
+test("photo detail title sticks to the viewport bottom until the photo section ends", async ({
+  page,
+}) => {
+  await page.goto("/photo/condensation-window");
+
+  const hero = page.getByRole("main").locator("section").first();
+  const title = hero.getByRole("heading", { level: 1, name: /condensation window/i });
+
+  const sectionMetrics = await hero.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+
+    return {
+      bottom: window.scrollY + rect.bottom,
+      top: window.scrollY + rect.top,
+      viewportHeight: window.innerHeight,
+    };
+  });
+
+  const readTitleMetrics = async () =>
+    title.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+
+      return {
+        bottomOffset: window.innerHeight - rect.bottom,
+        top: rect.top,
+      };
+    });
+
+  const initial = await readTitleMetrics();
+
+  expect(initial.bottomOffset).toBeGreaterThanOrEqual(0);
+  expect(initial.bottomOffset).toBeLessThan(80);
+
+  const stickyScrollY = Math.min(sectionMetrics.top + 320, sectionMetrics.bottom - sectionMetrics.viewportHeight - 40);
+
+  await page.evaluate((scrollY) => {
+    window.scrollTo(0, scrollY);
+  }, stickyScrollY);
+  await page.waitForTimeout(100);
+
+  const sticky = await readTitleMetrics();
+
+  expect(sticky.bottomOffset).toBeGreaterThanOrEqual(0);
+  expect(sticky.bottomOffset).toBeLessThan(80);
+  expect(Math.abs(sticky.bottomOffset - initial.bottomOffset)).toBeLessThan(40);
+
+  await page.evaluate(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+  await expect
+    .poll(async () => {
+      const released = await readTitleMetrics();
+      return released.bottomOffset >= sticky.bottomOffset + 120 || released.top < 0;
+    })
+    .toBe(true);
+});
+
 test("real-content launch exposes at least 22 photos in the sitemap without collection URLs", async ({
   page,
   request,
