@@ -22,26 +22,15 @@ type HomeSceneProps = {
   site: SiteSettings;
 };
 
+type WallDensity = "s" | "m" | "l";
+
 const AUTOPLAY_INTERVAL_MS = 6000;
 
-function getWallSpanClass(index: number) {
-  switch (index % 7) {
-    case 0:
-      return "md:col-span-7 lg:col-span-6";
-    case 1:
-      return "md:col-span-5 lg:col-span-4 lg:mt-14";
-    case 2:
-      return "md:col-span-4 lg:col-span-3";
-    case 3:
-      return "md:col-span-8 lg:col-span-7 lg:-mt-10";
-    case 4:
-      return "md:col-span-5 lg:col-span-4 lg:mt-20";
-    case 5:
-      return "md:col-span-7 lg:col-span-5";
-    default:
-      return "md:col-span-5 lg:col-span-4 lg:mt-8";
-  }
-}
+const WALL_DENSITY_CLASSES: Record<WallDensity, string> = {
+  s: "md:[column-count:4] lg:[column-count:5] md:[column-gap:1rem] lg:[column-gap:1.25rem]",
+  m: "md:[column-count:3] lg:[column-count:4] md:[column-gap:1.25rem] lg:[column-gap:1.5rem]",
+  l: "md:[column-count:2] lg:[column-count:3] md:[column-gap:1.5rem] lg:[column-gap:1.75rem]",
+};
 
 export function HomeScene({
   featuredCollections,
@@ -49,6 +38,7 @@ export function HomeScene({
   site,
 }: HomeSceneProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [density, setDensity] = useState<WallDensity>("m");
   const [isHovered, setIsHovered] = useState(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
   const [isDocumentVisible, setIsDocumentVisible] = useState(true);
@@ -245,25 +235,51 @@ export function HomeScene({
       </section>
 
       <section className="mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-10">
-        <div className="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-12 lg:gap-x-6 lg:gap-y-8">
-          {dedupedReelItems.map((item, index) => (
-            <Link
-              key={`${item.href}-${index}`}
-              className={`group block ${getWallSpanClass(index)} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]`}
-              href={item.href}
-            >
-              <div className="overflow-hidden bg-[var(--color-surface)] shadow-[0_18px_48px_var(--color-shadow)]">
+        <div className="quiet-rule pt-6 lg:pt-8">
+          <div className="mb-5 hidden items-center justify-end gap-3 md:flex">
+            {(["s", "m", "l"] as const).map((option) => {
+              const isActive = density === option;
+
+              return (
+                <button
+                  key={option}
+                  aria-pressed={isActive}
+                  className={`text-[0.84rem] uppercase tracking-[0.24em] transition-opacity ${
+                    isActive ? "text-[var(--color-ink)]" : "text-[var(--color-muted)] opacity-70 hover:opacity-100"
+                  } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]`}
+                  data-testid={`home-wall-density-${option}`}
+                  onClick={() => {
+                    setDensity(option);
+                  }}
+                  type="button"
+                >
+                  {option.toUpperCase()}
+                </button>
+              );
+            })}
+          </div>
+
+          <div
+            className={`columns-1 [column-gap:1rem] md:[column-fill:balance] ${WALL_DENSITY_CLASSES[density]}`}
+            data-testid="home-wall"
+          >
+            {dedupedReelItems.map((item, index) => (
+              <Link
+                key={`${item.href}-${index}`}
+                className="group mb-4 block w-full break-inside-avoid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:mb-6"
+                href={item.href}
+              >
                 <ProportionalImage
                   alt={item.alt}
-                  className="scene-image h-auto w-full transition duration-700 group-hover:scale-[1.018] motion-reduce:transition-none"
+                  className="scene-image h-auto w-full transition duration-500 group-hover:opacity-92 motion-reduce:transition-none"
                   height={item.height}
-                  sizes="(max-width: 768px) 92vw, (max-width: 1280px) 48vw, 32vw"
+                  sizes="(max-width: 767px) 92vw, (max-width: 1279px) 30vw, 23vw"
                   src={item.imageUrl}
                   width={item.width}
                 />
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

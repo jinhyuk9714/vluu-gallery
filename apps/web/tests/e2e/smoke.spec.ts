@@ -36,9 +36,17 @@ test("homepage, about, and contact render core editorial content without collect
   await expect(page.getByRole("main").getByText(/short stories, sparse captions/i)).toBeVisible();
   await expect(page.getByRole("link", { name: /collections/i })).toHaveCount(0);
   await expect(page.getByRole("main").getByText(/view collection/i)).toHaveCount(0);
-  await expect(page.getByRole("button", { name: /^s$/i })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: /^m$/i })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: /^l$/i })).toHaveCount(0);
+
+  const viewportWidth = page.viewportSize()?.width ?? 0;
+  if (viewportWidth < 768) {
+    await expect(page.getByRole("button", { name: /^s$/i })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^m$/i })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^l$/i })).toHaveCount(0);
+  } else {
+    await expect(page.getByRole("button", { name: /^s$/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^m$/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^l$/i })).toBeVisible();
+  }
   await expectCanonical(page, "/");
 
   await page.goto("/about");
@@ -51,6 +59,34 @@ test("homepage, about, and contact render core editorial content without collect
   await expect(page.getByRole("heading", { name: /reach out with context/i })).toBeVisible();
   await expect(page.getByText(/timeline, location, and intended use/i)).toBeVisible();
   await expectCanonical(page, "/contact");
+});
+
+test("home wall density controls are desktop-and-tablet only and change the column flow", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const viewportWidth = page.viewportSize()?.width ?? 0;
+
+  if (viewportWidth < 768) {
+    await expect(page.getByRole("button", { name: /^s$/i })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^m$/i })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^l$/i })).toHaveCount(0);
+    return;
+  }
+
+  const wall = page.getByTestId("home-wall");
+  await expect(wall).toBeVisible();
+
+  const readColumnCount = async () =>
+    wall.evaluate((element) => window.getComputedStyle(element).columnCount);
+
+  await page.getByRole("button", { name: /^s$/i }).click();
+  const denseColumns = await readColumnCount();
+
+  await page.getByRole("button", { name: /^l$/i }).click();
+  const looseColumns = await readColumnCount();
+
+  expect(Number.parseInt(denseColumns, 10)).toBeGreaterThan(Number.parseInt(looseColumns, 10));
 });
 
 test("sitemap exposes home, about, contact, and photo routes without collection URLs", async ({ page, request }) => {
