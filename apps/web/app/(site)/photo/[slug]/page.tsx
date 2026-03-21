@@ -48,7 +48,7 @@ export default async function PhotoPage({
   }
 
   return (
-    <div className="pb-10">
+    <div className="pb-12">
       <PhotoDetailHero
         alt={photo.alt}
         height={photo.height}
@@ -57,21 +57,29 @@ export default async function PhotoPage({
         width={photo.width}
       />
 
-      <section className="mx-auto grid w-full max-w-[1720px] gap-6 px-4 py-20 sm:px-6 lg:grid-cols-[0.48fr_0.52fr] lg:px-10">
-        <p className="text-[0.95rem] uppercase leading-none text-[var(--color-ink)]">Frame</p>
+      <section className="mx-auto grid w-full max-w-[1720px] gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.28fr_0.72fr] lg:px-10 lg:py-24">
+        <div className="space-y-4">
+          <p className="text-[0.78rem] uppercase tracking-[0.28em] text-[var(--color-steel)]">Frame</p>
+          <p className="max-w-[12ch] font-serif text-[clamp(2.8rem,5vw,4.8rem)] leading-[0.9] tracking-[-0.05em] text-[var(--color-ink)]">
+            {photo.title}
+          </p>
+        </div>
+
         <div className="space-y-8">
-          <p className="max-w-2xl text-base leading-7 text-[var(--color-ink)]">{photo.captionShort}</p>
-          <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
+          <p className="max-w-3xl text-[clamp(1.05rem,1.25vw,1.3rem)] leading-[1.8] text-[var(--color-ink)]">
+            {photo.captionShort}
+          </p>
+          <div className="grid gap-6 border-t border-[var(--color-line)] pt-6 sm:grid-cols-[10rem_1fr]">
             {photo.locationLabel ? (
               <>
-                <p className="text-[0.95rem] uppercase leading-none text-[var(--color-ink)]">Location</p>
-                <p className="text-base leading-7 text-[var(--color-ink)]">{photo.locationLabel}</p>
+                <p className="text-[0.78rem] uppercase tracking-[0.28em] text-[var(--color-steel)]">Location</p>
+                <p className="max-w-2xl text-[1rem] leading-7 text-[var(--color-ink)]">{photo.locationLabel}</p>
               </>
             ) : null}
             {photo.shotDate ? (
               <>
-                <p className="text-[0.95rem] uppercase leading-none text-[var(--color-ink)]">Date</p>
-                <p className="text-base leading-7 text-[var(--color-ink)]">{photo.shotDate}</p>
+                <p className="text-[0.78rem] uppercase tracking-[0.28em] text-[var(--color-steel)]">Date</p>
+                <p className="max-w-2xl text-[1rem] leading-7 text-[var(--color-ink)]">{photo.shotDate}</p>
               </>
             ) : null}
           </div>
@@ -80,17 +88,17 @@ export default async function PhotoPage({
 
       <nav
         aria-label="Photo pagination"
-        className="mx-auto grid w-full max-w-[1720px] gap-8 px-4 pb-6 pt-2 sm:px-6 lg:grid-cols-2 lg:px-10"
+        className="mx-auto grid w-full max-w-[1720px] gap-8 border-t border-[var(--color-line)] px-4 pb-6 pt-8 sm:px-6 lg:grid-cols-2 lg:px-10 lg:pt-10"
       >
         {photo.previousPhoto ? (
           <Link
             className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)]"
             href={`/photo/${photo.previousPhoto.slug}`}
           >
-            <span className="block font-serif text-[clamp(2.8rem,4.8vw,5rem)] leading-[0.9] tracking-[-0.05em] text-[var(--color-ink)]">
+            <span className="block text-[0.78rem] uppercase tracking-[0.28em] text-[var(--color-steel)]">
               PREV:
             </span>
-            <span className="block font-serif text-[clamp(2.8rem,4.8vw,5rem)] leading-[0.9] tracking-[-0.05em] text-[var(--color-ink)]">
+            <span className="mt-2 block font-serif text-[clamp(2.9rem,4.6vw,5.4rem)] leading-[0.92] tracking-[-0.055em] text-[var(--color-ink)]">
               {photo.previousPhoto.title}
             </span>
           </Link>
@@ -102,10 +110,10 @@ export default async function PhotoPage({
             className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:text-right"
             href={`/photo/${photo.nextPhoto.slug}`}
           >
-            <span className="block font-serif text-[clamp(2.8rem,4.8vw,5rem)] leading-[0.9] tracking-[-0.05em] text-[var(--color-ink)]">
+            <span className="block text-[0.78rem] uppercase tracking-[0.28em] text-[var(--color-steel)]">
               NEXT:
             </span>
-            <span className="block font-serif text-[clamp(2.8rem,4.8vw,5rem)] leading-[0.9] tracking-[-0.05em] text-[var(--color-ink)]">
+            <span className="mt-2 block font-serif text-[clamp(2.9rem,4.6vw,5.4rem)] leading-[0.92] tracking-[-0.055em] text-[var(--color-ink)]">
               {photo.nextPhoto.title}
             </span>
           </Link>

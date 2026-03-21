@@ -33,8 +33,12 @@ test("homepage, about, and contact render core editorial content without collect
   await expect(page.getByRole("link", { name: /home/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /contact/i })).toBeVisible();
   await expect(page.getByRole("main").getByText(/^scroll$/i)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/short stories, sparse captions/i)).toBeVisible();
   await expect(page.getByRole("link", { name: /collections/i })).toHaveCount(0);
   await expect(page.getByRole("main").getByText(/view collection/i)).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /^s$/i })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /^m$/i })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /^l$/i })).toHaveCount(0);
   await expectCanonical(page, "/");
 
   await page.goto("/about");

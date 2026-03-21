@@ -71,7 +71,7 @@ export function PhotoDetailHero({
   }, []);
 
   return (
-    <section className="relative min-h-[100svh] bg-[var(--color-surface)]" ref={sectionRef}>
+    <section className="relative isolate min-h-[100svh] overflow-hidden bg-[var(--color-surface)]" ref={sectionRef}>
       <div className="relative flex min-h-[100svh] items-end overflow-hidden">
         <ProportionalImage
           alt={alt}
@@ -82,14 +82,19 @@ export function PhotoDetailHero({
           src={imageUrl}
           width={width}
         />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.08)_28%,rgba(0,0,0,0.52)_100%)]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[48%] bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.1)_24%,rgba(0,0,0,0.44)_72%,rgba(0,0,0,0.6)_100%)]" />
       </div>
       <div className="pointer-events-none absolute inset-0 z-10">
         <div className={isReleased ? "absolute inset-x-0 bottom-0" : "fixed inset-x-0 bottom-0"}>
           <div className="mx-auto w-full max-w-[1720px] px-4 pb-4 sm:px-6 sm:pb-6 lg:px-10 lg:pb-8">
-            <h1 className="max-w-[8ch] font-serif text-[clamp(2.6rem,8vw,8.6rem)] leading-[0.88] tracking-[-0.05em] text-white sm:max-w-[10ch]">
-              {title}
-            </h1>
+            <div className="max-w-[min(72vw,44rem)] sm:max-w-[min(60vw,48rem)]">
+              <p className="mb-3 text-[0.72rem] uppercase tracking-[0.28em] text-white/72 sm:text-[0.78rem]">
+                Frame
+              </p>
+              <h1 className="max-w-[9ch] font-serif text-[clamp(2.7rem,7.5vw,8.8rem)] leading-[0.86] tracking-[-0.055em] text-white sm:max-w-[11ch]">
+                {title}
+              </h1>
+            </div>
           </div>
         </div>
       </div>

@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --color-accent: #111111;
-  --color-background: #faf8f3;
-  --color-ink: #0f0f0f;
-  --color-line: rgb(15 15 15 / 0.16);
-  --color-muted: rgb(15 15 15 / 0.8);
-  --color-steel: rgb(15 15 15 / 0.56);
-  --color-surface: rgb(15 15 15 / 0.04);
+  --color-accent: #f1ebdf;
+  --color-background: #0b0d0e;
+  --color-ink: #f1ebdf;
+  --color-line: rgb(241 235 223 / 0.14);
+  --color-muted: rgb(241 235 223 / 0.78);
+  --color-steel: rgb(241 235 223 / 0.52);
+  --color-surface: #121518;
+  --color-surface-elevated: #171b1f;
+  --color-shadow: rgb(0 0 0 / 0.28);
 }
 
 @theme inline {
@@ -30,6 +32,9 @@ body {
   font-family: var(--font-public-sans), sans-serif;
   min-height: 100%;
   text-rendering: optimizeLegibility;
+  background-image:
+    radial-gradient(circle at top, rgb(255 255 255 / 0.05), transparent 34%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.015), transparent 22%);
 }
 
 a {
@@ -67,6 +72,19 @@ h3,
 .chrome-ink {
   color: #fff;
   mix-blend-mode: difference;
+}
+
+.quiet-rule {
+  position: relative;
+}
+
+.quiet-rule::before {
+  background: linear-gradient(90deg, transparent 0%, var(--color-line) 12%, var(--color-line) 88%, transparent 100%);
+  content: "";
+  height: 1px;
+  inset: 0 auto auto 0;
+  position: absolute;
+  width: 100%;
 }
 
 @keyframes scene-reveal {

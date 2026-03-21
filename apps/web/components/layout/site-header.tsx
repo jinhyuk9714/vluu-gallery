@@ -6,27 +6,32 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function SiteHeader() {
   const pathname = usePathname();
   const overlayTone = pathname === "/" || pathname.startsWith("/photo/");
-  const textClass = overlayTone ? "text-white" : "text-[var(--color-ink)]";
+  const textClass = overlayTone ? "chrome-ink" : "text-[var(--color-ink)]";
+  const shellClass = overlayTone
+    ? "bg-transparent"
+    : "border-b border-[var(--color-line)] bg-[rgb(11_13_14_/_0.82)] backdrop-blur-xl";
+  const focusRingClass = overlayTone
+    ? "focus-visible:ring-white focus-visible:ring-offset-transparent"
+    : "focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-[var(--color-background)]";
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
-      <div className="mx-auto grid w-full max-w-[1720px] grid-cols-[auto_1fr_auto] items-start gap-5 px-4 py-4 sm:px-6 lg:px-10">
+    <header className={`pointer-events-none fixed inset-x-0 top-0 z-40 transition-colors ${shellClass}`}>
+      <div className="mx-auto flex w-full max-w-[1720px] items-start justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10">
         <Link
-          className={`pointer-events-auto text-[clamp(0.95rem,1vw,1.1rem)] leading-none transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-transparent ${textClass}`}
+          className={`pointer-events-auto text-[0.78rem] uppercase tracking-[0.32em] transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 ${focusRingClass} ${textClass}`}
           href="/"
         >
           VLUU
         </Link>
-        <nav
-          aria-label="Primary"
-          className="pointer-events-auto justify-self-center"
-        >
-          <div className={`flex flex-col items-start text-[clamp(0.98rem,1vw,1.15rem)] leading-[1.15] ${textClass}`}>
+
+        <nav aria-label="Primary" className="pointer-events-auto ml-auto">
+          <div className={`flex items-center gap-3 text-[0.78rem] uppercase tracking-[0.24em] sm:gap-5 ${textClass}`}>
             {navItems.map((item) => {
               const isActive = item.href === "/"
                 ? pathname === item.href
@@ -35,24 +40,18 @@ export function SiteHeader() {
               return (
                 <Link
                   key={item.href}
-                  className="transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
+                  className={`transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 ${focusRingClass}`}
                   href={item.href}
                 >
-                  <span className={isActive ? "mr-1 inline-block" : "mr-1 inline-block opacity-0"}>
-                    •
+                  <span className="inline-flex items-center gap-2">
+                    <span className={`h-[1px] w-3 bg-current transition-opacity ${isActive ? "opacity-100" : "opacity-0"}`} />
+                    {item.label}
                   </span>
-                  {item.label}
                 </Link>
               );
             })}
           </div>
         </nav>
-        <Link
-          className={`pointer-events-auto justify-self-end text-[clamp(0.98rem,1vw,1.15rem)] leading-none transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-transparent ${textClass}`}
-          href="/contact"
-        >
-          Contact
-        </Link>
       </div>
     </header>
   );

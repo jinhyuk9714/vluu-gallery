@@ -16,7 +16,7 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  description: "VLUU presents curated photographic sequences with a stark, cinematic tone.",
+  description: "VLUU is a photographic still journal cut from light, transit, weather, and quiet city sequences.",
   metadataBase: new URL(getSiteOrigin()),
   title: "VLUU",
 };
@@ -31,7 +31,7 @@ export default function RootLayout({
       lang="en"
       className={`${instrumentSerif.variable} ${publicSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[var(--color-background)] text-[var(--color-ink)]">
+      <body className="min-h-full flex flex-col bg-[var(--color-background)] text-[var(--color-ink)] shadow-[inset_0_1px_0_rgb(255_255_255_/_0.02)]">
         {children}
       </body>
     </html>

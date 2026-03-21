@@ -21,18 +21,25 @@ export async function SiteFooter() {
   })();
 
   return (
-    <footer className="mt-16">
-      <div className="mx-auto grid w-full max-w-[1720px] gap-3 px-4 py-4 text-[0.95rem] text-[var(--color-ink)] sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:items-end lg:px-10">
-        <p>{settings.siteTitle} © {currentYear}</p>
+    <footer className="mt-20 border-t border-[var(--color-line)]">
+      <div className="mx-auto grid w-full max-w-[1720px] gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[1.2fr_auto_1fr] lg:items-end lg:px-10 lg:py-10">
+        <div className="space-y-3">
+          <p className="text-[0.78rem] uppercase tracking-[0.28em] text-[var(--color-steel)]">
+            {settings.siteTitle}
+          </p>
+          <p className="max-w-[24rem] text-[0.95rem] leading-6 text-[var(--color-muted)]">
+            Photographic still journal. A slower edit of transit, weather, and city light. © {currentYear}
+          </p>
+        </div>
         <a
-          className="justify-self-start transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:justify-self-center"
+          className="w-fit text-[0.78rem] uppercase tracking-[0.24em] text-[var(--color-steel)] transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:justify-self-center"
           href="#top"
         >
           Back to top
         </a>
         {primarySocial ? (
           <a
-            className="transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:justify-self-end"
+            className="justify-self-start text-[0.9rem] uppercase tracking-[0.2em] text-[var(--color-muted)] transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:justify-self-end"
             href={primarySocial.url}
             rel="noreferrer"
             target="_blank"
@@ -41,7 +48,7 @@ export async function SiteFooter() {
           </a>
         ) : (
           <a
-            className="transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:justify-self-end"
+            className="justify-self-start text-[0.9rem] uppercase tracking-[0.2em] text-[var(--color-muted)] transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-ink)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-background)] lg:justify-self-end"
             href={`mailto:${settings.contactEmail}`}
           >
             {settings.contactEmail}
